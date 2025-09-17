@@ -5,7 +5,7 @@ from datetime import timedelta
 from pyrogram import filters
 from pyrogram.types import Message
 
-from app import bot, BOT_UPTIME
+from app import bot, BOT_UPTIME, LOADING_STICKER
 from app.utils.database import MemoryDB
 from app.modules.utils import UTILITY
 from app.utils.decorators.sudo_users import require_sudo
@@ -13,8 +13,8 @@ from app.utils.decorators.sudo_users import require_sudo
 @bot.on_message(filters.command("sys", ["/", "!", "-", "."]))
 @require_sudo
 async def func_sys(_, message: Message):
-    # Loading Sticker ID
-    sent_message = await message.reply_sticker("CAACAgUAAxkBAAEM96JovVa1TPS6ytZFdDe2W2XCNPV8vgADEQACtxIQVjlyOTplekF7NgQ")
+    # Sticker message cant be edit
+    sent_message = await message.reply_sticker(LOADING_STICKER)
     
     # Systen Uptime Calculating
     sys_uptime = timedelta(seconds=time() - psutil.boot_time())

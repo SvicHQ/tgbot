@@ -32,7 +32,7 @@ async def filter_private_chat(_, message: Message):
                 # if user sending message to owner then add userinfo
                 if user.id != config.owner_id:
                     text += (
-                        f"**Name:** _{user.mention}_\n"
+                        f"**Name:** <i>{user.mention}</i>\n"
                         f"**UserID:** `{user.id}`\n"
                     )
 
@@ -40,16 +40,17 @@ async def filter_private_chat(_, message: Message):
                 
                 # Common text for owner & user
                 text += (
-                    f"**Message:** {message.text_html}\n\n"
-                    "_Reply to this message to continue conversation!_\n"
-                    f"<tg-spoiler>#uid{hex(user.id).upper()}</tg-spoiler>"
+                    f"**Message:** {message.text.html if message.text else '-'}\n\n"
+                    "<i>Reply to this message to continue conversation!</i>\n"
+                    f"||#uid{hex(user.id)}||"
                 )
 
                 await bot.send_message(support_seeker_uid, text, reply_markup=btn)
                 reaction = "👍"
             except Forbidden:
                 reaction = "👎"
-            except:
+            except Exception as e:
+                await message.reply_text(f"Error: `{e}`")
                 reaction = "🤷‍♂"
             # Confirm that message is sent or not
             await message.react(reaction)
@@ -64,7 +65,15 @@ async def filter_private_chat(_, message: Message):
     
     # Echo message
     if user_data.get("echo"):
-        await message.reply_text(message.text_html or message.caption_html)
+        echo_message = None
+
+        if message.text:
+            echo_message = message.text.html
+        elif message.caption:
+            echo_message = message.caption.html
+        
+        if echo_message:
+            await message.reply_text(echo_message)
     
     # Auto Translator
     auto_tr = user_data.get("auto_tr")

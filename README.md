@@ -1,6 +1,6 @@
 # lib_change [tgbot 2.0]
 
-A new branch has been created by [@SvicHQ](https://github.com/SvicHQ).
+A new branch has been created by [@SvicHQ](https://github.com/SvicHQ) (Owner [@bishalqx980](https://github.com/bishalqx980)).
 In this branch, the project is being migrated from `python-telegram-bot (ptb)` to the `Pyrogram fork [Kurigram]`.
 
 > Note: The last release using `python-telegram-bot` was version `1.11.3.568`. All commits going forward will use `Kurigram`.

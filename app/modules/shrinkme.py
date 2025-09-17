@@ -5,7 +5,7 @@ from app.utils.database import MemoryDB
 async def shortener_url(url):
     shrinkme_api = MemoryDB.bot_data.get("shrinkme_api")
     if not shrinkme_api:
-        logger.error("shrinkme_api not found!")
+        logger.error("ShrinkeMe API wasn't provided!")
         return
     
     api_url = "https://shrinkme.io/api"

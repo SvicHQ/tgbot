@@ -14,7 +14,14 @@ async def func_trigger(_, message: Message):
     chat = message.chat
     user = message.from_user or message.sender_chat
     re_msg = message.reply_to_message
-    value = re_msg.text.html or re_msg.caption.html if re_msg else None
+
+    if re_msg and re_msg.text:
+        value = message.text.html
+    elif re_msg and re_msg.caption:
+        value = message.caption.html
+    else:
+        value = None
+    
     keyword = extract_cmd_args(message.text, message.command).lower()
     
     # Handle anonymous admin

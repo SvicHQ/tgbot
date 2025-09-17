@@ -3,11 +3,10 @@ from time import time
 from io import BytesIO
 
 from pyrogram import filters
-from pyrogram.types import CallbackQuery
+from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors import BadRequest, Forbidden
 
 from app import bot
-from app.helpers import BuildKeyboard
 from app.modules.utils import UTILITY
 from app.utils.database import DBConstants, MemoryDB, MongoDB
 
@@ -29,6 +28,7 @@ async def query_broadcast(_, query: CallbackQuery):
     
     # only for boolean (toggle)
     elif query_data.startswith("value_"):
+        # for example data will be `forward` or `pin`
         data = query_data.removeprefix("value_")
 
         existing_data = broadcastData.get(data) # Boolean
@@ -61,13 +61,14 @@ async def query_broadcast(_, query: CallbackQuery):
         is_pin = broadcastData["pin"]
 
         # getting userID from DB
-        users_id = MongoDB.find(DBConstants.USERS_DATA, "user_id")
-        active_status = MongoDB.find(DBConstants.USERS_DATA, "active_status")
+        users_id = MongoDB.find(DBConstants.USERS_DATA, "user_id") # registed users ID list
+        active_status = MongoDB.find(DBConstants.USERS_DATA, "active_status") # if users with `active_status`, no matter its True or False
         active_users = []
 
-        if len(users_id) != len(active_status):
+        if len(users_id) != len(active_status): # Checking if there is any user data that doesn't contains `active_status`
             active_users = users_id
         else:
+            # Separating `active_status` True users
             combined_list = list(zip(users_id, active_status))
             for user_id, is_active in combined_list:
                 if is_active: active_users.append(user_id)
@@ -102,7 +103,7 @@ async def query_broadcast(_, query: CallbackQuery):
             "[]"
         )
 
-        broadcastButton = BuildKeyboard.cbutton([{"Cancel": "broadcast_cancel"}])
+        broadcastButton = InlineKeyboardMarkup([[InlineKeyboardButton("❌ Cancel", "broadcast_cancel")]])
         
         try:
             await query.edit_message_text(text, reply_markup=broadcastButton)
@@ -144,7 +145,7 @@ async def query_broadcast(_, query: CallbackQuery):
             except Forbidden:
                 exception_count += 1
                 exception_users_id.append(f"Forbidden: {user_id}")
-                # updating MongoDB
+                # Updating MongoDB (user blocked the bot)
                 MongoDB.update(DBConstants.USERS_DATA, "user_id", int(user_id), {"active_status": False})
             
             except Exception as e:
@@ -169,7 +170,7 @@ async def query_broadcast(_, query: CallbackQuery):
                 progressBar
             )
 
-            btn = None if (sent_count + exception_count) == len(active_status) else broadcastButton
+            btn = None if (sent_count + exception_count) == len(active_users) else broadcastButton
 
             try:
                 await query.edit_message_text(updateText, reply_markup=btn)
@@ -204,4 +205,4 @@ async def query_broadcast(_, query: CallbackQuery):
     
     elif query_data == "cancel":
         broadcastData.update({"is_cancelled": True})
-        await query.answer("Broadcast Cancelled!", True)
+        await query.answer("Broadcast is cancelled!", True)

@@ -1,6 +1,6 @@
 from functools import wraps
 from pyrogram.types import Message
-from app import config
+from app import logger, config
 from app.utils.database import MemoryDB
 
 def require_sudo(func):
@@ -9,16 +9,17 @@ def require_sudo(func):
     """
     @wraps(func)
     async def wraper(_, message: Message):
-        user = message.from_user or message.sender_chat
-        owner_id = config.owner_id
-        sudo_users = MemoryDB.bot_data.get("sudo_users") or []
+        try:
+            owner_id = config.owner_id
+            sudo_users = MemoryDB.bot_data.get("sudo_users") or []
 
-        if owner_id not in sudo_users:
-            sudo_users.append(owner_id)
-        
-        if user.id not in sudo_users:
-            await message.reply_text("Access denied!")
-            return
+            if owner_id not in sudo_users:
+                sudo_users.append(owner_id)
+            
+            if message.from_user.id not in sudo_users:
+                return await message.reply_text("Access denied!")
+        except Exception as e:
+            return logger.error(e)
         
         return await func(_, message)
     return wraper

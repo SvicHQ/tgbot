@@ -8,9 +8,9 @@
 *.session*
 venv
 config.py
-/downloads
-/temp
-/sys
+downloads
+temp
+sys
 
 # Exception 
 !requirements.txt

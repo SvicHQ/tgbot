@@ -13,12 +13,12 @@ from app.utils.decorators.sudo_users import require_sudo
 @require_sudo
 async def func_send(_, message: Message):
     chat = message.chat
-    user = message.from_user or message.sender_chat
+    user = message.from_user
     re_msg = message.reply_to_message
     args = extract_cmd_args(message.text, message.command) # contains something if forward is true and contains victim_id >> /send f chat_id
     
     if not args or not re_msg:
-        await message.reply_text(
+        return await message.reply_text(
             f"Use `/{message.command[0]} ChatID/Username` by replying a message!\n"
             f"`/{message.command[0]} f ChatID/Username` to forward the replied message to ChatID/Username!\n"
             "<blockquote expandable>Returns reaction on message\n"
@@ -26,7 +26,6 @@ async def func_send(_, message: Message):
             "- Forbidden: 👎\n"
             "- Something went wrong: 🤷‍♂ </blockquote>"
         )
-        return
     
     forward_confirm = None
     victim_id = args # ID or Username
@@ -44,23 +43,22 @@ async def func_send(_, message: Message):
             try:
                 victim_chat_info = await bot.get_chat(victim_id)
             except Exception as e:
-                await message.reply_text(str(e))
-                return
+                return await message.reply_text(str(e))
             
-            if victim_chat_info.type in [ChatType.PRIVATE]:
+            if victim_chat_info.type == ChatType.PRIVATE:
                 text = (
-                    f"Message: {re_msg.text.html}\n\n"
+                    f"Message: {re_msg.text.html if re_msg.text else '-'}\n\n"
                     "<i>Reply to this message to continue conversation!</i>\n"
-                    f"<tg-spoiler>#uid{hex(user.id)}</tg-spoiler>"
+                    f"||#uid{hex(user.id)}||"
                 )
                 caption = (
-                    f"Message: {re_msg.caption_html}\n\n"
+                    f"Message: {re_msg.caption.html if re_msg.caption else '-'}\n\n"
                     "<i>Reply to this message to continue conversation!</i>\n"
-                    f"<tg-spoiler>#uid{hex(user.id)}</tg-spoiler>"
+                    f"||#uid{hex(user.id)}||"
                 )
             else:
-                text = re_msg.text.html
-                caption = re_msg.caption_html
+                text = re_msg.text.html if re_msg.text else None
+                caption = re_msg.caption.html if re_msg.caption else None
             
             photo = re_msg.photo
             audio = re_msg.audio
@@ -70,7 +68,7 @@ async def func_send(_, message: Message):
             video_note = re_msg.video_note
             btn = re_msg.reply_markup
 
-            if text:
+            if re_msg.text:
                 await bot.send_message(victim_id, text, reply_markup=btn)
 
             elif photo:
@@ -83,7 +81,7 @@ async def func_send(_, message: Message):
                 await bot.send_video(victim_id, video.file_id, caption, reply_markup=btn)
 
             elif document:
-                await bot.send_document(victim_id, document.file_id, caption=caption, filename=document.file_name, reply_markup=btn)
+                await bot.send_document(victim_id, document.file_id, caption=caption, file_name=document.file_name, reply_markup=btn)
             
             elif voice:
                 await bot.send_voice(victim_id, voice.file_id, caption, reply_markup=btn)
@@ -92,12 +90,12 @@ async def func_send(_, message: Message):
                 await bot.send_video_note(victim_id, video_note.file_id, reply_markup=btn)
             
             else:
-                await message.reply_text("Replied content isn't added yet. /support to contact with dev.")
-                return
+                return await message.reply_text("Replied content isn't added yet. /support to contact with developer.")
             
     except Forbidden:
         reaction = "👎"
-    except:
+    except Exception as e:
+        await message.reply_text(f"Error: `{e}`")
         reaction = "🤷‍♂"
 
     await message.react(reaction)

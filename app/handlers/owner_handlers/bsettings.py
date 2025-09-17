@@ -1,11 +1,10 @@
 import random
 
 from pyrogram import filters
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors import BadRequest
 
 from app import bot, logger
-from app.helpers import BuildKeyboard
 from app.utils.database import DBConstants, MemoryDB
 from app.utils.decorators.pm_only import pm_only
 from app.utils.decorators.sudo_users import require_sudo
@@ -23,13 +22,28 @@ class BotSettingsData:
         "• Weather API: `{}`"
     )
 
-    BUTTONS = [
-        {"Show Bot Photo": "bsettings_show_bot_pic", "Images": "bsettings_images"},
-        {"Support Chat": "bsettings_support_chat", "Server URL": "bsettings_server_url"},
-        {"Sudo": "bsettings_sudo", "Shrinkme API": "bsettings_shrinkme_api"},
-        {"OMDB API": "bsettings_omdb_api", "Weather API": "bsettings_weather_api"},
-        {"> ⁅ Database ⁆": "bsettings_database", "Close": "misc_close"}
-    ]
+    BUTTONS = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("Show Bot Photo", "bsettings_show_bot_pic"),
+            InlineKeyboardButton("Images", "bsettings_images")
+        ],
+        [
+            InlineKeyboardButton("Support Chat", "bsettings_support_chat"),
+            InlineKeyboardButton("Server URL", "bsettings_server_url")
+        ],
+        [
+            InlineKeyboardButton("Sudo", "bsettings_sudo"),
+            InlineKeyboardButton("Shrinkme API", "bsettings_shrinkme_api")
+        ],
+        [
+            InlineKeyboardButton("OMDB API", "bsettings_omdb_api"),
+            InlineKeyboardButton("Weather API", "bsettings_weather_api")
+        ],
+        [
+            InlineKeyboardButton("> ⁅ Database ⁆", "bsettings_database"),
+            InlineKeyboardButton("Close", "misc_close")
+        ]
+    ])
 
 @bot.on_message(filters.command("bsettings", ["/", "!", "-", "."]))
 @pm_only
@@ -37,7 +51,7 @@ class BotSettingsData:
 async def func_bsettings(_, message: Message):
     user = message.from_user
 
-    # requied data needed for editing
+    # required data needed for editing
     data = {
         "user_id": user.id, # authorization
         "collection_name": DBConstants.BOT_DATA,
@@ -60,13 +74,12 @@ async def func_bsettings(_, message: Message):
         bot_data.get('omdb_api') or '-',
         bot_data.get('weather_api') or '-'
     )
-
-    btn = BuildKeyboard.cbutton(BotSettingsData.BUTTONS)
     
-    show_bot_pic = MemoryDB.bot_data.get("show_bot_pic")
+    # Required variables
+    show_bot_pic = MemoryDB.bot_data.get("show_bot_pic") # boolean
     images = MemoryDB.bot_data.get("images")
-    photo = None
-    photo_file_id = None
+    photo = None # random images set by owner/sudo
+    photo_file_id = None # the photo id of bot itself
 
     if images:
         photo = random.choice(images).strip()
@@ -79,12 +92,11 @@ async def func_bsettings(_, message: Message):
     
     if photo or photo_file_id:
         try:
-            await message.reply_photo(photo or photo_file_id, caption=text, reply_markup=btn)
-            return
+            return await message.reply_photo(photo or photo_file_id, caption=text, reply_markup=BotSettingsData.BUTTONS)
         except BadRequest:
             pass
         except Exception as e:
             logger.error(e)
     
     # if BadRequest or No Photo or Other error
-    await message.reply_text(text, reply_markup=btn)
+    await message.reply_text(text, reply_markup=BotSettingsData.BUTTONS)

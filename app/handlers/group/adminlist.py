@@ -17,7 +17,7 @@ async def func_adminlist(_, message: Message):
         admin_name = "Anonymous" if admin.privileges.is_anonymous else admin.user.mention
         formatted_text = f"• {admin_name} - <i>{admin.custom_title or '~'}</i>\n"
         
-        if admin.status in [ChatMemberStatus.OWNER]:
+        if admin.status == ChatMemberStatus.OWNER:
             owner += formatted_text
         elif not admin.user.is_bot:
             admins += formatted_text

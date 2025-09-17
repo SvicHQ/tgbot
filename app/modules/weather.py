@@ -5,7 +5,7 @@ from app.utils.database import MemoryDB
 async def weather_info(location):
     weather_api = MemoryDB.bot_data.get("weather_api")
     if not weather_api:
-        logger.error("weather_api not found!")
+        logger.error("Weather API wasn't provided!")
         return
     
     api_url = "https://api.weatherapi.com/v1/current.json"

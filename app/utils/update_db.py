@@ -5,9 +5,8 @@ def update_database():
     bot_data = MongoDB.find(DBConstants.BOT_DATA, "_id")
     if bot_data:
         data = MongoDB.find_one(DBConstants.BOT_DATA, "_id", bot_data[0])
-        MemoryDB.insert(DBConstants.BOT_DATA, None, data)
-        logger.info("MongoDB database exist! Skiping update process!")
-        return
+        MemoryDB.insert(DBConstants.BOT_DATA, data=data)
+        return logger.info("MongoDB is already updated!")
     
     config_data = {
         "api_id": config.api_id,
@@ -23,9 +22,6 @@ def update_database():
         "weather_api": config.weather_api
     }
     
-    try:
-        MongoDB.insert(DBConstants.BOT_DATA, config_data)
-        MemoryDB.insert(DBConstants.BOT_DATA, None, config_data)
-        logger.info("Database has been updated from local config file.")
-    except Exception as e:
-        logger.warning(e)
+    MongoDB.insert(DBConstants.BOT_DATA, config_data)
+    MemoryDB.insert(DBConstants.BOT_DATA, data=config_data)
+    logger.info("MongoDB has been updated from local config file.")

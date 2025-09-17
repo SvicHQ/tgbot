@@ -4,8 +4,7 @@ from io import BytesIO
 from pyrogram import filters
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 
-from app import bot
-from app.helpers import BuildKeyboard
+from app import bot, LOADING_STICKER
 from app.helpers.args_extractor import extract_cmd_args
 from app.utils.database import DBConstants, MongoDB
 from app.utils.decorators.pm_only import pm_only
@@ -17,6 +16,9 @@ from app.utils.decorators.sudo_users import require_sudo
 async def func_database(_, message: Message):
     # CHAT/USER ID // not username
     victim_id = extract_cmd_args(message.text, message.command)
+
+    # Sticker message cant be edit
+    sent_message = await message.reply_sticker(LOADING_STICKER)
     
     if not victim_id:
         database_info = MongoDB.info()
@@ -34,25 +36,25 @@ async def func_database(_, message: Message):
         active_users = active_status.count(True)
         inactive_users = active_status.count(False)
 
-        await message.reply_text(
+        await sent_message.delete()
+        return await message.reply_text(
             f"{msg_storage}" # already has 2 escapes
             f"**• Active users:** `{active_users}`\n"
             f"**• Inactive users:** `{inactive_users}`\n\n"
             f"<blockquote>**Note:** `/{message.command[0]} ChatID` to get specific chat database information.</blockquote>"
         )
-        return
     
     try:
         victim_id = int(victim_id)
     except ValueError:
-        await message.reply_text("Invalid ChatID!")
-        return
+        await sent_message.delete()
+        return await message.reply_text("Invalid ChatID!")
     
     if "-100" in str(victim_id):
         chat_data = MongoDB.find_one(DBConstants.CHATS_DATA, "chat_id", victim_id) # victim_id as int
         if not chat_data:
-            await message.reply_text("Chat not found!")
-            return
+            await sent_message.delete()
+            return await message.reply_text("Chat not found!")
         
         try:
             victim_info = await bot.get_chat(victim_id)
@@ -81,7 +83,7 @@ async def func_database(_, message: Message):
             f"• Allowed Links: `{', '.join(chat_data.get('allowed_links') or [])}`"
         )
 
-        btn = BuildKeyboard.ubutton([{"Invite Link": chat_invite_link}]) if chat_invite_link else None
+        btn = InlineKeyboardMarkup([[InlineKeyboardButton("Invite Link", url=chat_invite_link)]]) if chat_invite_link else None
         
         custom_welcome_msg = chat_data.get('custom_welcome_msg')
         if custom_welcome_msg:
@@ -100,8 +102,8 @@ async def func_database(_, message: Message):
     else:
         user_data = MongoDB.find_one(DBConstants.USERS_DATA, "user_id", victim_id) # victim_id as int
         if not user_data:
-            await message.reply_text("User not found!")
-            return
+            await sent_message.delete()
+            return await message.reply_text("User not found!")
         
         try:
             victim_info = await bot.get_users(victim_id)
@@ -133,4 +135,5 @@ async def func_database(_, message: Message):
             btn = InlineKeyboardMarkup([[InlineKeyboardButton("User Profile", user_id=victim_info.id)]]) if victim_info.username else None
     
     # common message sender for both group chat & private chat database info
+    await sent_message.delete()
     await message.reply_text(text, reply_markup=btn)

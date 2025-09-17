@@ -20,6 +20,7 @@ BOT_UPTIME = time()
 PSNDL_DATABASE_URL = "https://psndl.pages.dev/database.json"
 TL_LANG_CODES_URL = "https://telegra.ph/Language-Code-12-24"
 TTS_LANG_CODES_URL = "https://telegra.ph/Text-to-speech---language-codes-tts-01-23"
+LOADING_STICKER = "CAACAgUAAxkBAAEM96JovVa1TPS6ytZFdDe2W2XCNPV8vgADEQACtxIQVjlyOTplekF7NgQ"
 RUN_SERVER = False # switch to run flask server
 
 # Creating Required Folder/Directories

@@ -34,7 +34,7 @@ class TELEGRAPH:
         :param text: supports HTML format
         """
         if not (self.domain or self.telegraph):
-            logger.error("Telegraph isn't initialized!")
+            logger.error("Telegraph wasn't initialized!")
             return
         
         try:

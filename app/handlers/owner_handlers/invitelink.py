@@ -13,10 +13,13 @@ async def func_invitelink(_, message: Message):
     chat_id = extract_cmd_args(message.text, message.command)
     
     if not chat_id:
-        return await message.reply_text(f"`/{message.command[0]} ChatID` to get specified chat invite link.\n<i>Note: only works if this bot is in that chat and have enough permissions to get invite link!</i>")
+        return await message.reply_text(
+            f"`/{message.command[0]} ChatID` to get specified chat invite link.\n"
+            "<i>Note: only works if this bot is in that chat and have enough permissions to get invite link!</i>"
+        )
     
     sent_message = await message.reply_text("Please wait...")
-
+    
     try:
         res = await bot.create_chat_invite_link(chat_id, "GHOST")
     except Exception as e:

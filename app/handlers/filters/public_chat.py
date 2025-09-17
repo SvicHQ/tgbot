@@ -40,7 +40,15 @@ async def filter_public_chat(_, message: Message):
     
     # Echo message
     if chat_data.get("echo") and not filtered_text:
-        await message.reply_text(message.text.html or message.caption.html)
+        echo_message = None
+
+        if message.text:
+            echo_message = message.text.html
+        elif message.caption:
+            echo_message = message.caption.html
+        
+        if echo_message:
+            await message.reply_text(echo_message)
     
     # Auto Translator
     auto_tr = chat_data.get("auto_tr")

@@ -15,13 +15,11 @@ class MemoryDatabase:
         :param data: `dict`
         """
         if not data:
-            logger.error("MemoryDatabase: `data` parameter can't be None.")
-            return
+            return logger.error("MemoryDatabase: `data` parameter can't be None.")
         
         collection = getattr(self, collection_name, None)
         if not collection_name:
-            logger.error(f"MemoryDatabase: Invalid collection name: {collection}")
-            return
+            return logger.error(f"MemoryDatabase: Invalid collection name ({collection})")
         
         if identifier:
             load_data = collection.get(identifier)

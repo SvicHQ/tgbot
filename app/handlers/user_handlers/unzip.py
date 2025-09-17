@@ -3,7 +3,7 @@ from time import time
 from asyncio import sleep
 
 from pyrogram import Client, filters
-from pyrogram.types import Message
+from pyrogram.types import Message, ReplyParameters
 
 from app import bot, logger
 from app.helpers.args_extractor import extract_cmd_args
@@ -81,4 +81,4 @@ async def func_unzip(_: Client, message: Message):
         except Exception as e:
             logger.error(e)
     
-    await message.reply_text(f"Upload Completed! ({uploaded}/{len(response)})\n{uploadfailed}", reply_to_message_id=message.id)
+    await message.reply_text(f"Upload Completed! ({uploaded}/{len(response)})\n{uploadfailed}", reply_parameters=ReplyParameters(message_id=message.id))

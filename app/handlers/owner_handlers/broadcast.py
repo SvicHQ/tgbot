@@ -1,8 +1,7 @@
 from pyrogram import filters
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 
 from app import bot
-from app.helpers import BuildKeyboard
 from app.utils.database import DBConstants, MemoryDB
 from app.utils.decorators.pm_only import pm_only
 from app.utils.decorators.sudo_users import require_sudo
@@ -13,12 +12,11 @@ from app.utils.decorators.sudo_users import require_sudo
 async def func_broadcast(_, message: Message):
     re_msg = message.reply_to_message
     if not re_msg:
-        await message.reply_text("Reply a message to broadcast!")
-        return
+        return await message.reply_text("Reply the message/content that you want to broadcast!")
     
     # variables
-    broadcastText = re_msg.text.html # only if the message doesn't contain any video/doc or other things
-    broadcastCaption = re_msg.caption.html # message with video/audio/doc etc.
+    broadcastText = re_msg.text.html if re_msg.text else None # only if the message doesn't contain any video/doc or other things
+    broadcastCaption = re_msg.caption.html if re_msg.caption else None # message with video/audio/doc etc.
 
     broadcastPhoto = re_msg.photo.file_id if re_msg.photo else None
 
@@ -33,9 +31,15 @@ async def func_broadcast(_, message: Message):
 
     broadcastVoice = re_msg.voice.file_id if re_msg.voice else None
 
-    broadcastButton = BuildKeyboard.cbutton([
-        {"📩 Forward": "broadcast_value_forward", "📌 Pin": "broadcast_value_pin"},
-        {"✅ Send": "broadcast_send", "❌ Close": "misc_close"}
+    broadcastButton = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("📩 Forward", "broadcast_value_forward"),
+            InlineKeyboardButton("📌 Pin", "broadcast_value_pin")
+        ],
+        [
+            InlineKeyboardButton("✅ Send", "broadcast_send"),
+            InlineKeyboardButton("❌ Close", "misc_close")
+        ]
     ])
 
     broadcastData = {
