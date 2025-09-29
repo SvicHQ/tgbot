@@ -33,7 +33,10 @@ async def func_info(_, message: Message):
             victim = from_user
         
         if not victim:
-            return await message.reply_text(f"**• Full name:** `{forward_origin.sender_user_name}`\n<i>Replied user account is hidden!</i>")
+            return await message.reply_text(
+                f"**• Full name:** `{forward_origin.sender_user_name}`\n"
+                "<i>Replied user account is hidden!</i>"
+            )
     
     if not victim: victim = user
 

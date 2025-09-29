@@ -17,6 +17,7 @@ ORIGINAL_BOT_USERNAME = "MissCiri_bot"
 ORIGINAL_BOT_ID = 6845693976
 DEFAULT_ERROR_CHANNEL_ID = -1002675104487
 BOT_UPTIME = time()
+PSNDL_WEBSITE_URL = "https://bishalqx980.github.io/psndl/"
 PSNDL_DATABASE_URL = "https://psndl.pages.dev/database.json"
 TL_LANG_CODES_URL = "https://telegra.ph/Language-Code-12-24"
 TTS_LANG_CODES_URL = "https://telegra.ph/Text-to-speech---language-codes-tts-01-23"

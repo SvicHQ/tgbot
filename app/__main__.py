@@ -16,7 +16,7 @@ from .utils.database import MemoryDB
 
 async def post_init():
     # initializing telegraph
-    # await telegraph.initialize()
+    await telegraph.initialize()
 
     # bot pvt commands
     bot_pvt_commands = [

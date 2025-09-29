@@ -29,17 +29,17 @@ class TELEGRAPH:
                 logger.error(e)
 
 
-    async def paste(self, text, username="anonymous"):
+    async def paste(self, text, username="Anonymous"):
         """
         :param text: supports HTML format
+        :returns str: returns URL on success
         """
         if not (self.domain or self.telegraph):
-            logger.error("Telegraph wasn't initialized!")
-            return
+            return logger.error("Telegraph wasn't initialized!")
         
         try:
             path = await self.telegraph.create_page(
-                f"{username} - @{ORIGINAL_BOT_USERNAME}",
+                title=f"{username} - @{ORIGINAL_BOT_USERNAME}",
                 html_content=text.replace("\n", "<br>"), # replacing \n with <br>
                 author_name=f"{username} using @{ORIGINAL_BOT_USERNAME}",
                 author_url=f"https://t.me/{ORIGINAL_BOT_USERNAME}"

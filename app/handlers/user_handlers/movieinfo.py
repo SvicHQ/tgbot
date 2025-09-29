@@ -10,12 +10,19 @@ async def func_movie(_, message: Message):
     movie_name = extract_cmd_args(message.text, message.command)
 
     if not movie_name:
-        await message.reply_text(f"Use `/{message.command[0]} movie name`\nE.g. `/{message.command[0]} animal`\nor\n`/{message.command[0]} -i tt13751694` [IMDB ID]\nor\n`/{message.command[0]} bodyguard -y 2011`")
-        return
+        return await message.reply_text(
+            f"Use `/{message.command[0]} movie name`\n"
+            f"E.g. `/{message.command[0]} animal` OR\n"
+            f"`/{message.command[0]} -i tt13751694` [IMDB ID] OR\n"
+            f"`/{message.command[0]} bodyguard -y 2011`"
+        )
+        
     
     if "-i" in movie_name and "-y" in movie_name:
-        await message.reply_text(f"⚠ You can't use both statement at once!\n/{message.command[0]} for details.")
-        return
+        return await message.reply_text(
+            f"⚠ You can't use both statement at once!\n"
+            f"/{message.command[0]} for details."
+        )
     
     imdb_id = None
     year = None
@@ -28,14 +35,13 @@ async def func_movie(_, message: Message):
         index_y = movie_name.index("-y")
         year = movie_name[index_y + len("-y"):].strip()
         movie_name = movie_name[0: index_y].strip()
-
+    
     movie_info = await fetch_movieinfo(movie_name=movie_name, imdb_id=imdb_id, year=year)
     if not movie_info:
-        await message.reply_text("Oops! Something went wrong!")
-        return
+        return await message.reply_text("Oops! Something went wrong!")
+    
     elif movie_info["Response"] == "False":
-        await message.reply_text("Invalid movie name!")
-        return
+        return await message.reply_text("Invalid movie name!")
     
     runtime = movie_info["Runtime"]
     runtime = f"{int(runtime[0:3]) // 60} Hour {int(runtime[0:3]) % 60} Min" if runtime != "N/A" else "N/A"
@@ -61,7 +67,7 @@ async def func_movie(_, message: Message):
         f"<blockquote expandable>**📝 Plot:** {movie_info.get('Plot')}</blockquote>"
     )
 
-    photo = movie_info["Poster"]
+    photo = movie_info.get("Poster")
     if photo:
         await message.reply_photo(photo, caption=text)
     else:

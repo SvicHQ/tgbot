@@ -1,7 +1,7 @@
 from time import time
 
 from pyrogram import filters
-from pyrogram.types import Message
+from pyrogram.types import Message, Chat
 
 from app import bot
 from app.helpers.args_extractor import extract_cmd_args
@@ -13,8 +13,10 @@ async def func_imagine(_, message: Message):
     prompt = extract_cmd_args(message.text, message.command)
 
     if not prompt:
-        await message.reply_text(f"Use `/{message.command[0]} prompt`\nE.g. `/{message.command[0]} A cat and a dog playing`")
-        return
+        return await message.reply_text(
+            f"Use `/{message.command[0]} prompt`\n"
+            f"E.g. `/{message.command[0]} A cat and a dog playing`"
+        )
     
     sent_message = await message.reply_text("🎨 Generating...")
 
@@ -23,13 +25,19 @@ async def func_imagine(_, message: Message):
     response_time = f"{(time() - start_time):.2f}s"
 
     if not response:
-        await sent_message.edit_text("Oops! Something went wrong!")
-        return
+        return await sent_message.edit_text("Oops! Something went wrong!")
+    
+    if isinstance(user, Chat):
+        mention = "Anonymous" # user.title
+        user_id = "Hidden"
+    else:
+        mention = user.mention
+        user_id = user.id
     
     caption = (
-        f"<blockquote>{user.mention}: {prompt}</blockquote>\n"
+        f"<blockquote>{mention}: {prompt}</blockquote>\n"
         f"**Process time:** `{response_time}`\n"
-        f"**UserID:** `{user.id}`"
+        f"**UserID:** `{user_id}`"
     )
 
     await sent_message.delete()

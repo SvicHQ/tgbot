@@ -1,5 +1,5 @@
 from pyrogram import filters
-from pyrogram.types import Message
+from pyrogram.types import Message, Chat, InlineKeyboardButton, InlineKeyboardMarkup
 
 from app import bot
 from app.helpers.args_extractor import extract_cmd_args
@@ -11,19 +11,30 @@ async def func_paste(_, message: Message):
     re_msg = message.reply_to_message
 
     if re_msg and re_msg.text:
-        text = message.text.html
+        text = re_msg.text.html
     elif re_msg and re_msg.caption:
-        text = message.caption.html
+        text = re_msg.caption.html
     else:
         text = extract_cmd_args(message.text, message.command)
     
     if not text:
         return await message.reply_text(f"Use `/{message.command[0]} text` or reply the message/text with `/{message.command[0]}` command.")
 
-    sent_message = await message.reply_text(f"Creating...")
+    sent_message = await message.reply_text("Creating...")
 
-    paste = await telegraph.paste(text, user.full_name)
-    if not paste:
+    response = await telegraph.paste(text, user.full_name)
+    if not response:
         return await sent_message.edit_text("Oops! Something went wrong!")
     
-    await sent_message.edit_text(paste)
+    if isinstance(user, Chat):
+        mention = "Anonymous" # user.title
+        user_id = "Hidden"
+    else:
+        mention = user.mention
+        user_id = user.id
+    
+    await sent_message.edit_text(
+        f"**URL:** {response}\n"
+        f"**Req by:** {mention} | `{user_id}`\n",
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Instant View", url=response)]])
+    )

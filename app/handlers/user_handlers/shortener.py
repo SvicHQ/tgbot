@@ -11,8 +11,11 @@ async def func_shorturl(_, message: Message):
     url = (re_msg.text or re_msg.caption) if re_msg else extract_cmd_args(message.text, message.command)
 
     if not url:
-        await message.reply_text(f"Use `/{message.command[0]} url`\nor reply the url with `/{message.command[0]}` command.\nE.g. `/{message.command[0]} https://google.com`")
-        return
+        return await message.reply_text(
+            f"Use `/{message.command[0]} url` OR\n"
+            f"reply the url with `/{message.command[0]}` command.\n"
+            f"E.g. `/{message.command[0]} https://google.com`"
+        )
     
     shortedURL = await shortener_url(url) or "Oops! Something went wrong!"
     await message.reply_text(shortedURL)

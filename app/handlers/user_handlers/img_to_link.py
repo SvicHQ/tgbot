@@ -1,10 +1,10 @@
 from time import time
 
 from pyrogram import filters
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.errors import BadRequest
 
-from app import bot
-from app.helpers import BuildKeyboard
+from app import bot, logger
 from app.modules.freeimagehost import upload_image
 
 @bot.on_message(filters.command("imgtolink", ["/", "!", "-", "."]))
@@ -20,16 +20,25 @@ async def func_imgtolink(_, message: Message):
             photo = None
 
     if not re_msg or not photo:
-        await message.reply_text("Reply a photo to get a public link for that photo!")
-        return
+        return await message.reply_text("Reply a photo to get a public link for that photo!")
     
-    sent_message = await message.reply_text(f"💭 Generating...")
-    photo_path = await re_msg.download(f"/downloads/imgtolink_{int(time())}.png")
-
+    sent_message = await message.reply_text("💭 Generating...")
+    photo_path = await re_msg.download(f"downloads/imgtolink_{int(time())}.png", True)
+    
     response = await upload_image(photo_path)
     if not response:
-        await sent_message.edit_text("Timeout! Please try again or report the issue." if response is False else "Oops! Something went wrong!")
-        return
+        return await sent_message.edit_text(
+            "Timeout! Please try again or report the issue." if response is False else "Oops! Something went wrong!"
+        )
+    
+    if response.get("status_code") != 200:
+        error = response.get("error")
+        if error:
+            text = f"Error: {error.get('message')}"
+        else:
+            text = "Oops! Something went wrong!"
+        
+        return await sent_message.edit_text(text)
     
     image_data = response["image"]
 
@@ -48,5 +57,20 @@ async def func_imgtolink(_, message: Message):
         f"**- Mime:** `{img_mime}`"
     )
 
-    btn = BuildKeyboard.ubutton([{"View 👀": img_url}])
+    btn = InlineKeyboardMarkup([[InlineKeyboardButton("View 👀", url=img_url)]])
+
+    try:
+        await message.reply_photo(
+            img_url,
+            caption=text,
+            reply_markup=btn
+        )
+        # Delete sent_message
+        return await sent_message.delete()
+    except BadRequest:
+        pass
+    except Exception as e:
+        logger.error(e)
+    
+    # if BadRequest or No Photo Sent or Other error
     await sent_message.edit_text(text, reply_markup=btn)

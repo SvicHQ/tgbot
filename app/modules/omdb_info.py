@@ -10,12 +10,10 @@ async def fetch_movieinfo(movie_name=None, imdb_id=None, year=None):
     """
     omdb_api = MemoryDB.bot_data.get("omdb_api")
     if not omdb_api:
-        logger.error("OMDB API key wasn't provided!")
-        return
+        return logger.error("OMDB API key wasn't provided!")
     
     if movie_name is None and imdb_id is None:
-        logger.error("Both value can't be None! movie_name or imdb_id must be provided!")
-        return
+        return logger.error("Both value can't be None! movie_name or imdb_id must be provided!")
     
     api_url = "https://omdbapi.com/"
     params = {

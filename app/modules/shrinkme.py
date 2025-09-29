@@ -5,8 +5,7 @@ from app.utils.database import MemoryDB
 async def shortener_url(url):
     shrinkme_api = MemoryDB.bot_data.get("shrinkme_api")
     if not shrinkme_api:
-        logger.error("ShrinkeMe API wasn't provided!")
-        return
+        return logger.error("ShrinkeMe API wasn't provided!")
     
     api_url = "https://shrinkme.io/api"
     params = {
@@ -17,10 +16,8 @@ async def shortener_url(url):
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(api_url, params=params) as response:
-                if not response.ok:
-                    return
-                
-                data = await response.json()
-                return data["shortenedUrl"]
+                if response.ok:
+                    data = await response.json()
+                    return data["shortenedUrl"]
     except Exception as e:
         logger.error(e)

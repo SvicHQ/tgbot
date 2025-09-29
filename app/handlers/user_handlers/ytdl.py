@@ -14,15 +14,13 @@ async def func_ytdl(_, message: Message):
     url = extract_cmd_args(message.text, message.command)
 
     if not url or not url.startswith("http"):
-        await message.reply_text(f"Download audio/song from youtube. E.g. `/{message.command[0]} url`")
-        return
+        return await message.reply_text(f"Download audio/song from youtube. E.g. `/{message.command[0]} url`")
     
     sent_message = await message.reply_text("Downloading...")
 
     response = youtube_download(url)
     if not isinstance(response, dict):
-        await sent_message.edit_text(f"Error: {response}")
-        return
+        return await sent_message.edit_text(f"Error: {response}")
     
     file_name = f"{response['title']}.mp3"
     file_path = response["file_path"]

@@ -29,7 +29,7 @@ class QR:
             img.save(img_buffer, "PNG")
             img_buffer.seek(0)
 
-            return img_buffer.read()
+            return img_buffer
         except Exception as e:
             logger.error(e)
     
@@ -37,7 +37,7 @@ class QR:
     @staticmethod
     def decode_qr(image_data):
         """
-        :param image_data: byte or image path
+        :param image_data: bytes or image path
         :returns ?:
         """
         try:

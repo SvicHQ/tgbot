@@ -10,13 +10,11 @@ async def func_weather(_, message: Message):
     location = extract_cmd_args(message.text, message.command)
 
     if not location:
-        await message.reply_text(f"Use `/{message.command[0]} location name`\nE.g. `/{message.command[0]} los angeles`")
-        return
+        return await message.reply_text(f"Use `/{message.command[0]} location name`\nE.g. `/{message.command[0]} los angeles`")
     
     info = await weather_info(location)
     if not info:
-        await message.reply_text("Oops! Something went wrong! (invalid location name? 🤔)")
-        return
+        return await message.reply_text("Oops! Something went wrong! (invalid location name? 🤔)")
     
     await message.reply_text(
         f"<blockquote>**Location info**</blockquote>\n\n"

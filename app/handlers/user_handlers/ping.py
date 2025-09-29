@@ -12,8 +12,7 @@ async def func_ping(_, message: Message):
     url = extract_cmd_args(message.text, message.command)
 
     if not url:
-        await message.reply_text(f"Use `/{message.command[0]} url`\nE.g. `/{message.command[0]} https://google.com`")
-        return
+        return await message.reply_text(f"Use `/{message.command[0]} url`\nE.g. `/{message.command[0]} https://google.com`")
     
     if url[0:4] != "http":
         url = f"http://{url}"
@@ -57,7 +56,7 @@ async def func_ping(_, message: Message):
         text = "Error: Request timeout."
     except aiohttp.ServerConnectionError:
         text = "Error: Connection error."
-    except Exception:
-        text = "Oops! Something went wrong!"
+    except Exception as e:
+        text = f"Error: {e}"
     
     await sent_message.edit_text(f"**{text}**")

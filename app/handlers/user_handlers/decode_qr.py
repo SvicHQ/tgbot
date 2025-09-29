@@ -12,12 +12,12 @@ async def func_decqr(_, message: Message):
     re_msg = message.reply_to_message
 
     if not re_msg or not (re_msg.photo or re_msg.document):
-        await message.reply_text(f"Reply a QR code image using /{message.command[0]} to decode it!")
-        return
+        return await message.reply_text(
+            f"Reply a QR code image using /{message.command[0]} to decode it!"
+        )
     
     if re_msg.document and not "image" in re_msg.document.mime_type:
-        await message.reply_text("Replied message isn't an image!")
-        return
+        return await message.reply_text("Replied message isn't an image!")
     
     image = re_msg.photo or re_msg.document
     if isinstance(image, tuple): image = image[-1]
@@ -28,7 +28,7 @@ async def func_decqr(_, message: Message):
         sent_message = await message.reply_document(image.file_id, caption="Please wait...")
     
     # Reading Image file in memory
-    image_data = await re_msg.download(f"/downloads/qrimage_{int(time())}.png", True)
+    image_data = await re_msg.download(f"downloads/qrimage_{int(time())}.png", True)
 
     start_time = time()
     response = QR.decode_qr(image_data)

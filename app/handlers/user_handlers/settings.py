@@ -1,9 +1,8 @@
 from pyrogram import filters
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 
 from app import bot
-from app.helpers import BuildKeyboard
-from app.utils.database import DBConstants, MemoryDB, database_search
+from app.utils.database import DBConstants, database_search, MemoryDB
 
 class PvtChatSettingsData:
     TEXT = (
@@ -17,15 +16,21 @@ class PvtChatSettingsData:
         "• Echo: `{}`"
     )
 
-    BUTTONS = [
-        {"Language": "csettings_lang", "Auto translate": "csettings_auto_tr"},
-        {"Echo": "csettings_echo", "Close": "misc_close"}
-    ]
+    BUTTONS = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("Language", "csettings_lang"),
+            InlineKeyboardButton("Auto translate", "csettings_auto_tr")
+        ],
+        [
+            InlineKeyboardButton("Echo", "csettings_echo"),
+            InlineKeyboardButton("Close", "misc_close")
+        ]
+    ])
 
 
 @bot.on_message(filters.command("settings", ["/", "!", "-", "."]) & filters.private)
 async def func_settings(_, message: Message):
-    user = message.from_user or message.sender_chat
+    user = message.from_user # Private Chat User
 
     data = {
         "user_id": user.id, # authorization
@@ -38,8 +43,7 @@ async def func_settings(_, message: Message):
 
     user_data = database_search(DBConstants.USERS_DATA, "user_id", user.id)
     if not user_data:
-        await message.reply_text("<blockquote>**Error:** Chat isn't registered! Remove/Block me from this chat then add me again!</blockquote>")
-        return
+        return await message.reply_text("<blockquote>**Error:** Chat isn't registered! Remove/Block me from this chat then add me again!</blockquote>")
     
     text = PvtChatSettingsData.TEXT.format(
         user.mention,
@@ -49,5 +53,4 @@ async def func_settings(_, message: Message):
         'Enabled' if user_data.get('echo') else 'Disabled'
     )
 
-    btn = BuildKeyboard.cbutton(PvtChatSettingsData.BUTTONS)
-    await message.reply_text(text, reply_markup=btn)
+    await message.reply_text(text, reply_markup=PvtChatSettingsData.BUTTONS)

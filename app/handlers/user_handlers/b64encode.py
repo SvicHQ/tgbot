@@ -10,8 +10,10 @@ async def func_encode(_, message: Message):
     text = extract_cmd_args(message.text, message.command) or (re_msg.text or re_msg.caption if re_msg else None)
 
     if not text:
-        await message.reply_text(f"Use `/{message.command[0]} text`\nor reply any text with `/{message.command[0]}`command.")
-        return
+        return await message.reply_text(
+            f"Use `/{message.command[0]} text`\n"
+            f"or reply any text with `/{message.command[0]}`command."
+        )
     
     encodedText = BASE64.encode(text)
     await message.reply_text(f"`{encodedText}`" if encodedText else "Invalid text!")
