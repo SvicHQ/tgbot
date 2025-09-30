@@ -1,9 +1,8 @@
 from pyrogram import filters
-from pyrogram.types import Chat, Message
+from pyrogram.types import Chat, Message, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.enums import ChatMemberStatus
 
 from app import bot
-from app.helpers import BuildKeyboard
 from app.helpers.group_helper import GroupHelper
 from app.utils.decorators.pm_error import pm_error
 
@@ -27,5 +26,14 @@ async def func_leave(_, message: Message):
     if user_status.status != ChatMemberStatus.OWNER:
         return await message.reply_text("Huh, you aren't the owner of this chat!")
     
-    btn = BuildKeyboard.cbutton([{"Leave": f"admin_leavechat_{user.id}", "Stay": "misc_close"}, {"Close": "misc_close"}])
+    btn = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("Leave", f"admin_leavechat_{user.id}"),
+            InlineKeyboardButton("Stay", "misc_close")
+        ],
+        [
+            InlineKeyboardButton("Close", "misc_close")
+        ]
+    ])
+    
     await message.reply_text("Should I leave?", reply_markup=btn)

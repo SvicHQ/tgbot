@@ -1,8 +1,7 @@
 from pyrogram import filters
-from pyrogram.types import Chat, Message, ChatPermissions
+from pyrogram.types import Chat, Message, ChatPermissions, InlineKeyboardButton, InlineKeyboardMarkup
 
 from app import bot
-from app.helpers import BuildKeyboard
 from app.helpers.group_helper import GroupHelper
 from app.helpers.args_extractor import extract_cmd_args
 from app.utils.database import DBConstants, database_search, MemoryDB, MongoDB
@@ -85,7 +84,7 @@ async def func_warn(_, message: Message):
         f"**Reason (current warn):** `{reason if reason else 'Not Given'}`"
     )
 
-    btn = BuildKeyboard.cbutton([{"Remove Warn's (Admin only)": f"admin_remove_warn_{victim.id}"}])
+    btn = InlineKeyboardMarkup([[InlineKeyboardButton("Remove Warn's (Admin only)", f"admin_remove_warn_{victim.id}")]])
     await message.reply_text(text, reply_markup=btn)
 
     if warn_count >= 3:

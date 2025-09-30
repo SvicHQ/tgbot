@@ -1,8 +1,7 @@
 from pyrogram import filters
-from pyrogram.types import Chat, Message
+from pyrogram.types import Chat, Message, InlineKeyboardButton, InlineKeyboardMarkup
 
 from app import bot
-from app.helpers import BuildKeyboard
 from app.helpers.group_helper import GroupHelper
 from app.helpers.args_extractor import extract_cmd_args
 from app.modules.utils import UTILITY
@@ -74,5 +73,7 @@ async def func_whisper(_, message: Message):
     
     MemoryDB.insert(DBConstants.CHATS_DATA, chat.id, {"whispers": whispers})
 
-    btn = BuildKeyboard.cbutton([{"See the message 💭": f"misc_whisper_{whisper_key}"}])
-    await sent_message.edit_text(f"Hey, {victim.mention}. You got a whisper message from _{user.full_name}_.", reply_markup=btn)
+    await sent_message.edit_text(
+        f"Hey, {victim.mention}. You got a whisper message from _{user.full_name}_.",
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("See the message 💭", f"misc_whisper_{whisper_key}")]])
+    )

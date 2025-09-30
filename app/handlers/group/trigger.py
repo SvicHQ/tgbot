@@ -1,8 +1,7 @@
 from pyrogram import filters
-from pyrogram.types import Chat, Message
+from pyrogram.types import Chat, Message, InlineKeyboardButton, InlineKeyboardMarkup
 
 from app import bot
-from app.helpers import BuildKeyboard
 from app.helpers.group_helper import GroupHelper
 from app.helpers.args_extractor import extract_cmd_args
 from app.utils.database import DBConstants, database_search, MemoryDB, MongoDB
@@ -48,9 +47,7 @@ async def func_trigger(_, message: Message):
         }
 
         MemoryDB.insert(DBConstants.DATA_CENTER, chat.id, data)
-
-        btn = BuildKeyboard.cbutton([{"Close": "misc_close"}])
-
+        
         # send a small video demo instead of long message and formatting button
         return await message.reply_text(
             "To set triggers for this chat follow the instruction below...\n"
@@ -67,7 +64,7 @@ async def func_trigger(_, message: Message):
             "`{mention}` mention\n"
             "`{id}` id\n"
             "`{chatname}` chat title\n",
-            reply_markup=btn
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Close", "misc_close")]])
         )
     
     chat_data = database_search(DBConstants.CHATS_DATA, "chat_id", chat.id)
