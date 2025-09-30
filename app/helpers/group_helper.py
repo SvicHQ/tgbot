@@ -1,10 +1,9 @@
 import asyncio
 
-from pyrogram.types import Chat, Message
+from pyrogram.types import Chat, Message, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.enums import ChatMembersFilter, ChatMemberStatus
 
 from app import bot
-from app.helpers import BuildKeyboard
 from app.utils.database import DBConstants, MemoryDB
 
 class GroupHelper:
@@ -54,8 +53,10 @@ class GroupHelper:
         anonymous_admin = None
         MemoryDB.insert(DBConstants.DATA_CENTER, chat.id, {"anonymous_admin": None})
 
-        btn = BuildKeyboard.cbutton([{"Verify": "admin_anonymous_verify"}])
-        sent_message = await message.reply_text("UwU, annoymous admin! Click on `Verify` to proceed next!", reply_markup=btn)
+        sent_message = await message.reply_text(
+            "UwU, anonymous admin! Click on `Verify` to proceed next!",
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Verify", "admin_anonymous_verify")]])
+        )
         
         for i in range(timeout):
             data_center = MemoryDB.data_center[chat.id]

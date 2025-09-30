@@ -3,7 +3,6 @@ from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors import Forbidden
 
 from app import bot, config, TL_LANG_CODES_URL
-from app.helpers import BuildKeyboard
 from app.utils.database import DBConstants, database_search, MemoryDB
 
 from app.handlers.core.support import support_state_one
@@ -80,8 +79,10 @@ async def filter_private_chat(_, message: Message):
     chat_lang = user_data.get("lang")
 
     if auto_tr and not chat_lang:
-        btn = BuildKeyboard.ubutton([{"Language code's": TL_LANG_CODES_URL}])
-        await message.reply_text("Chat language code wasn't found! Use /settings to set chat language.", reply_markup=btn)
+        await message.reply_text(
+            "Chat language code wasn't found! Use /settings to set chat language.",
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Language code's", url=TL_LANG_CODES_URL)]])
+        )
     
     elif auto_tr:
         await autoTranslate(message, user, chat_lang)

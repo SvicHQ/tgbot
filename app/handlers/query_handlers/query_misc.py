@@ -1,8 +1,7 @@
 from pyrogram import filters
-from pyrogram.types import CallbackQuery
+from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 
 from app import bot
-from app.helpers import BuildKeyboard
 from app.utils.database import DBConstants, MemoryDB, MongoDB, database_search
 
 @bot.on_callback_query(filters.regex(r"misc_[A-Za-z0-9]+"))
@@ -48,9 +47,11 @@ async def query_misc(_, query: CallbackQuery):
             whispers.pop(whisper_key)
             # Diffrent from normal /whisper cmd
             MemoryDB.insert(DBConstants.DATA_CENTER, "whisper_data", {"whispers": whispers})
-
-            btn = BuildKeyboard.cbutton([{"Try Yourself!": "switch_to_inline"}])
-            await query.edit_message_text(f"<i>The whisper message is seen by {user.full_name}!</i>", reply_markup=btn)
+            
+            await query.edit_message_text(
+                f"<i>The whisper message is seen by {user.full_name}!</i>",
+                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Try Yourself!", "switch_to_inline")]])
+            )
     
     elif query_data.startswith("whisper_"):
         chat_data = database_search(DBConstants.CHATS_DATA, "chat_id", chat.id)

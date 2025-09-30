@@ -2,7 +2,6 @@ from pyrogram import filters
 from pyrogram.types import Chat, Message
 
 from app import bot
-from app.helpers import BuildKeyboard
 from app.helpers.group_helper import GroupHelper
 from app.helpers.args_extractor import extract_cmd_args
 from app.utils.database import DBConstants, database_search, MemoryDB, MongoDB

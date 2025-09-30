@@ -30,7 +30,7 @@ class HelpMenuData:
         [
             InlineKeyboardButton("» bot.info()", "help_menu_botinfo"),
             InlineKeyboardButton("Close", "misc_close"),
-            InlineKeyboardButton("Try inline", "switch_to_inline")
+            InlineKeyboardButton("Try inline", switch_inline_query_current_chat="")
         ]
     ])
 

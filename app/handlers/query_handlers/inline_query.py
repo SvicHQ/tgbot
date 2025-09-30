@@ -1,10 +1,9 @@
 from base64 import b64decode, b64encode
 
-from pyrogram.types import InlineQuery, InlineQueryResultArticle
+from pyrogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.enums import ChatType
 
 from app import bot
-from app.helpers import BuildKeyboard
 from app.utils.database import DBConstants, MemoryDB
 from app.modules.utils import UTILITY
 
@@ -14,7 +13,7 @@ async def inline_query_handler(_, query: InlineQuery):
     message = query.query
     results = []
     # Default button
-    btn = BuildKeyboard.cbutton([{"Try inline": "switch_to_inline"}])
+    btn = InlineKeyboardMarkup([[InlineKeyboardButton("Try inline", switch_inline_query_current_chat="")]])
 
     if not message:
         # instruction for user
@@ -40,16 +39,16 @@ async def inline_query_handler(_, query: InlineQuery):
         results.append(
             InlineQueryResultArticle(
                 title="ℹ️ Instructions",
-                input_message_content=instruction_message,
+                input_message_content=InputTextMessageContent(instruction_message),
                 description="Click to see instructions...!",
                 reply_markup=btn
             )
         )
-
+        
         return await query.answer(results)
     
     # whisper option: if chat isn't private | This whisper system is temporary store message, use /whisper cmd for permanent message store
-    if query.chat_type not in [ChatType.PRIVATE, ChatType.SENDER]:
+    if query.chat_type in [ChatType.GROUP, ChatType.SUPERGROUP]:
         splitted_message = message.split()
         whisper_username = splitted_message[0]
         secret_message = " ".join(splitted_message[1:])
@@ -59,7 +58,7 @@ async def inline_query_handler(_, query: InlineQuery):
             process_whisper = False
             results.append(InlineQueryResultArticle(
                 title="😮‍💨 Whisper: Error ❌",
-                input_message_content=f"`{whisper_username}` isn't a valid username! Check instructions... Example: `@{bot.me.username} @username Your Secret message!`",
+                input_message_content=InputTextMessageContent(f"`{whisper_username}` isn't a valid username! Check instructions... Example: `@{bot.me.username} @username Your Secret message!`"),
                 description=f"{whisper_username}, isn't a valid username!",
                 reply_markup=btn
             ))
@@ -68,7 +67,7 @@ async def inline_query_handler(_, query: InlineQuery):
             process_whisper = False
             results.append(InlineQueryResultArticle(
                 title="😮‍💨 Whisper: Error ❌",
-                input_message_content="Whisper isn't for bots!",
+                input_message_content=InputTextMessageContent("Whisper isn't for bots!"),
                 description="same",
                 reply_markup=btn
             ))
@@ -77,7 +76,7 @@ async def inline_query_handler(_, query: InlineQuery):
             process_whisper = False
             results.append(InlineQueryResultArticle(
                 title="😮‍💨 Whisper: Error ❌",
-                input_message_content="What do you want to whisper? There is not whisper message!",
+                input_message_content=InputTextMessageContent("What do you want to whisper? There is not whisper message!"),
                 description="same",
                 reply_markup=btn
             ))
@@ -86,7 +85,7 @@ async def inline_query_handler(_, query: InlineQuery):
             process_whisper = False
             results.append(InlineQueryResultArticle(
                 title="😮‍💨 Whisper: Error ❌",
-                input_message_content="Whisper message is too long. (Max limit: 150 Characters)",
+                input_message_content=InputTextMessageContent("Whisper message is too long. (Max limit: 150 Characters)"),
                 description="same",
                 reply_markup=btn
             ))
@@ -107,14 +106,14 @@ async def inline_query_handler(_, query: InlineQuery):
             # Diffrent from normal /whisper cmd
             MemoryDB.insert(DBConstants.DATA_CENTER, "whisper_data", {"whispers": whispers})
 
-            btn = BuildKeyboard.cbutton([
-                {"See the message 💭": f"misc_tmp_whisper_{whisper_key}"},
-                {"Try Yourself!": "switch_to_inline"}
+            btn = InlineKeyboardMarkup([
+                [InlineKeyboardButton("See the message 💭", f"misc_tmp_whisper_{whisper_key}")],
+                [InlineKeyboardButton("Try Yourself!", "switch_to_inline")]
             ])
 
             results.append(InlineQueryResultArticle(
                 title=f"😮‍💨 Whisper: Send to {whisper_username}? ✅",
-                input_message_content=f"Hey, {whisper_username}. You got a whisper message from {user.name}.",
+                input_message_content=InputTextMessageContent(f"Hey, {whisper_username}. You got a whisper message from {user.name}."),
                 description=f"Send whisper to {whisper_username}!",
                 reply_markup=btn
             ))
@@ -136,7 +135,7 @@ async def inline_query_handler(_, query: InlineQuery):
 
     results.append(InlineQueryResultArticle(
         title=f"❕ user.info({user.full_name})",
-        input_message_content=user_info,
+        input_message_content=InputTextMessageContent(user_info),
         description="See your info...!",
         reply_markup=btn
     ))
@@ -146,7 +145,7 @@ async def inline_query_handler(_, query: InlineQuery):
         b64_decode = b64decode(message).decode("utf-8")
         results.append(InlineQueryResultArticle(
             title="📦 Base64: Decode (base64 to text)",
-            input_message_content=f"`{b64_decode}`",
+            input_message_content=InputTextMessageContent(f"`{b64_decode}`"),
             description=b64_decode,
             reply_markup=btn
         )) if b64_decode else None
@@ -157,7 +156,7 @@ async def inline_query_handler(_, query: InlineQuery):
         b64_encode = b64encode(message.encode("utf-8")).decode("utf-8")
         results.append(InlineQueryResultArticle(
             title="📦 Base64: Encode (text to base64)",
-            input_message_content=f"`{b64_encode}`",
+            input_message_content=InputTextMessageContent(f"`{b64_encode}`"),
             description=b64_encode,
             reply_markup=btn
         )) if b64_encode else None

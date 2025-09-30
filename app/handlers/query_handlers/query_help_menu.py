@@ -3,11 +3,10 @@ from time import time
 from datetime import timedelta
 
 from pyrogram import filters
-from pyrogram.types import CallbackQuery
+from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors import BadRequest
 
 from app import bot, logger, BOT_UPTIME, __version__
-from app.helpers import BuildKeyboard
 from app.utils.database import DBConstants, MongoDB
 
 from app.handlers.core.help import HelpMenuData
@@ -21,7 +20,7 @@ async def query_help_menu(_, query: CallbackQuery):
 
     if query_data == "menu":
         text = HelpMenuData.TEXT
-        btn = BuildKeyboard.cbutton(HelpMenuData.BUTTONS)
+        btn = HelpMenuData.BUTTONS
     
     elif query_data == "gm1":
         text = (
@@ -45,9 +44,14 @@ async def query_help_menu(_, query: CallbackQuery):
             "Some command has a silent & delete function! eg. `/s[command]` & `/d[command]` » /sban or /dban etc.</blockquote>"
         )
 
-        btn = BuildKeyboard.cbutton([
-            {"Next page ⇒": "help_menu_gm2"},
-            {"Back": "help_menu_menu", "Close": "misc_close"}
+        btn = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("Next page ⇒", "help_menu_gm2")
+            ],
+            [
+                InlineKeyboardButton("Back", "help_menu_menu"),
+                InlineKeyboardButton("Close", "misc_close")
+            ]
         ])
     
     elif query_data == "gm2":
@@ -69,9 +73,14 @@ async def query_help_menu(_, query: CallbackQuery):
             "Some command has a silent & delete function! eg. `/s[command]` & `/d[command]` » /sban or /dban etc.</blockquote>"
         )
 
-        btn = BuildKeyboard.cbutton([
-            {"⇐ Previous page": "help_menu_gm1"},
-            {"Back": "help_menu_menu", "Close": "misc_close"}
+        btn = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("⇐ Previous page", "help_menu_gm1")
+            ],
+            [
+                InlineKeyboardButton("Back", "help_menu_menu"),
+                InlineKeyboardButton("Close", "misc_close")
+            ]
         ])
     
     elif query_data == "ai_knowledge":
@@ -84,8 +93,11 @@ async def query_help_menu(_, query: CallbackQuery):
             "<blockquote>**Note:** Send command to get more details about the command functions!</blockquote>"
         )
 
-        btn = BuildKeyboard.cbutton([
-            {"Back": "help_menu_menu", "Close": "misc_close"}
+        btn = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("Back", "help_menu_menu"),
+                InlineKeyboardButton("Close", "misc_close")
+            ]
         ])
     
     elif query_data == "misc":
@@ -116,9 +128,12 @@ async def query_help_menu(_, query: CallbackQuery):
 
             "<blockquote>**Note:** Send command to get more details about the command functions!</blockquote>"
         )
-        
-        btn = BuildKeyboard.cbutton([
-            {"Back": "help_menu_menu", "Close": "misc_close"}
+
+        btn = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("Back", "help_menu_menu"),
+                InlineKeyboardButton("Close", "misc_close")
+            ]
         ])
     
     elif query_data == "owner":
@@ -138,9 +153,12 @@ async def query_help_menu(_, query: CallbackQuery):
 
             "<blockquote>**Note:** Send command to get more details about the command functions!</blockquote>"
         )
-        
-        btn = BuildKeyboard.cbutton([
-            {"Back": "help_menu_menu", "Close": "misc_close"}
+
+        btn = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("Back", "help_menu_menu"),
+                InlineKeyboardButton("Close", "misc_close")
+            ]
         ])
     
     elif query_data == "botinfo":
@@ -158,18 +176,20 @@ async def query_help_menu(_, query: CallbackQuery):
         active_users = active_status.count(True)
         inactive_users = active_status.count(False)
 
+        # Systen Uptime Calculating
         sys_uptime = timedelta(seconds=time() - psutil.boot_time())
 
         sys_days = sys_uptime.days
         sys_hours, remainder = divmod(sys_uptime.seconds, 3600)
         sys_minute = remainder / 60
 
+        # Bot Uptime Calculating
         bot_uptime = timedelta(seconds=time() - BOT_UPTIME)
-
+        
         bot_days = bot_uptime.days
         bot_hours, remainder = divmod(bot_uptime.seconds, 3600)
         bot_minute = remainder / 60
-
+        
         text = (
             "<blockquote>`**» bot.info()**`</blockquote>\n\n"
 
@@ -186,11 +206,19 @@ async def query_help_menu(_, query: CallbackQuery):
             f"**• Bot uptime:** `{int(bot_days)}d {int(bot_hours)}h {int(bot_minute)}m`\n"
             f"**• Version (stable):** `{__version__}`"
         )
-        
-        btn = BuildKeyboard.cbutton([
-            {"Source code": "https://github.com/bishalqx980/tgbot", "Report bug": "https://github.com/bishalqx980/tgbot/issues"},
-            {"Developer": "https://t.me/bishalqx680/22"},
-            {"Back": "help_menu_menu", "Close": "misc_close"}
+
+        btn = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("Source code", url="https://github.com/bishalqx980/tgbot"),
+                InlineKeyboardButton("Report bug", url="https://github.com/bishalqx980/tgbot/issues")
+            ],
+            [
+                InlineKeyboardButton("Developer", url="https://t.me/bishalqx680/22")
+            ],
+            [
+                InlineKeyboardButton("Back", "help_menu_menu"),
+                InlineKeyboardButton("Close", "misc_close")
+            ]
         ])
     
     # global reply

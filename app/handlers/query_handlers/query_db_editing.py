@@ -1,12 +1,9 @@
 import asyncio
 
 from pyrogram import filters
-from pyrogram.types import CallbackQuery
-from pyrogram.enums import ChatType
-from pyrogram.errors import BadRequest
+from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 
 from app import bot
-from app.helpers import BuildKeyboard
 from app.utils.database import DBConstants, MemoryDB, MongoDB
 
 @bot.on_callback_query(filters.regex(r"database_[A-Za-z0-9]+"))
@@ -27,6 +24,7 @@ async def query_db_editing(_, query: CallbackQuery):
     data_center = MemoryDB.data_center.get(chat.id) # using chat_id bcz it could be chat settings too
     if not data_center:
         await query.answer("Session Expired.", True)
+        # Try to delete messages
         try:
             message_id = query.message.message_id
             await bot.delete_messages([message_id, message_id - 1])
@@ -54,11 +52,13 @@ async def query_db_editing(_, query: CallbackQuery):
     # getting update_data_value
     if query_data == "edit_value":
         MemoryDB.insert(DBConstants.DATA_CENTER, chat.id, {"update_data_value": None, "is_editing": True})
-        
+
         timeout = 10
 
-        btn = BuildKeyboard.cbutton([{"Cancel": "database_cancel_editing"}])
-        sent_message = await chat.send_message(f"Waiting for a new value (Timeout: {timeout}s): ", reply_markup=btn)
+        sent_message = await chat.send_message(
+            f"Waiting for a new value (Timeout: {timeout}s): ",
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Cancel", "database_cancel_editing")]])
+        )
 
         for i in range(timeout):
             data_center = MemoryDB.data_center[chat.id]
@@ -95,10 +95,8 @@ async def query_db_editing(_, query: CallbackQuery):
         response = MongoDB.update(collection_name, search_key, match_value, {update_data_key: update_data_value})
         if response:
             identifier = None if collection_name == DBConstants.BOT_DATA else chat.id
-            data = {update_data_key: update_data_value}
 
-            MemoryDB.insert(collection_name, identifier, data)
-
+            MemoryDB.insert(collection_name, identifier, {update_data_key: update_data_value})
             await query.answer("Database Updated Successfully.\nRefresh to see the updated value!", True)
 
         else:
@@ -107,6 +105,7 @@ async def query_db_editing(_, query: CallbackQuery):
     elif query_data == "cancel_editing":
         MemoryDB.insert(DBConstants.DATA_CENTER, chat.id, {"update_data_value": None, "is_editing": False})
         await query.answer("Operation cancelled.", True)
+
         try:
             await query.delete_message()
         except:
@@ -118,10 +117,8 @@ async def query_db_editing(_, query: CallbackQuery):
         response = MongoDB.update(collection_name, search_key, match_value, {update_data_key: update_data_value})
         if response:
             identifier = None if collection_name == DBConstants.BOT_DATA else chat.id
-            data = {update_data_key: update_data_value}
 
-            MemoryDB.insert(collection_name, identifier, data)
-
+            MemoryDB.insert(collection_name, identifier, {update_data_key: update_data_value})
             await query.answer("Database Updated Successfully.", True)
 
         else:
@@ -133,10 +130,8 @@ async def query_db_editing(_, query: CallbackQuery):
         response = MongoDB.update(collection_name, search_key, match_value, {update_data_key: update_data_value})
         if response:
             identifier = None if collection_name == DBConstants.BOT_DATA else chat.id
-            data = {update_data_key: update_data_value}
 
-            MemoryDB.insert(collection_name, identifier, data)
-
+            MemoryDB.insert(collection_name, identifier, {update_data_key: update_data_value})
             await query.answer("Database Updated Successfully.\nRefresh to see the updated value!", True)
 
         else:
@@ -148,10 +143,8 @@ async def query_db_editing(_, query: CallbackQuery):
         response = MongoDB.update(collection_name, search_key, match_value, {update_data_key: update_data_value})
         if response:
             identifier = None if collection_name == DBConstants.BOT_DATA else chat.id
-            data = {update_data_key: update_data_value}
 
-            MemoryDB.insert(collection_name, identifier, data)
-
+            MemoryDB.insert(collection_name, identifier, {update_data_key: update_data_value})
             await query.answer("Database Updated Successfully.\nRefresh to see the updated value!", True)
 
         else:

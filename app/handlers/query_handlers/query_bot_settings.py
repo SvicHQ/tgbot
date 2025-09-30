@@ -2,11 +2,10 @@ import json
 from io import BytesIO
 
 from pyrogram import filters
-from pyrogram.types import CallbackQuery
+from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors import BadRequest
 
 from app import bot, logger
-from app.helpers import BuildKeyboard
 from app.utils.update_db import update_database
 from app.utils.database import DBConstants, MemoryDB, MongoDB
 
@@ -24,7 +23,6 @@ async def query_bot_settings(_, query: CallbackQuery):
 
     # variable required for global reply
     is_editing_btn = None
-    is_refresh_btn = True
 
     if query_data == "menu":
         text = BotSettingsData.TEXT.format(
@@ -39,7 +37,6 @@ async def query_bot_settings(_, query: CallbackQuery):
         )
 
         btn_data = BotSettingsData.BUTTONS
-        is_refresh_btn = False
     
     elif query_data == "show_bot_pic":
         MemoryDB.insert(DBConstants.DATA_CENTER, user.id, {
@@ -54,10 +51,19 @@ async def query_bot_settings(_, query: CallbackQuery):
             "<blockquote>**Note:** Send's /start message or other supported message with Bot photo.</blockquote>"
         ).format("Yes" if bot_data.get("show_bot_pic") else "No")
 
-        btn_data = [
-            {"YES": "database_bool_true", "NO": "database_bool_false"},
-            {"Back": "bsettings_menu", "Close": "misc_close"}
-        ]
+        btn_data = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("Refresh", query.data)
+            ],
+            [
+                InlineKeyboardButton("YES", "database_bool_true"),
+                InlineKeyboardButton("NO", "database_bool_false")
+            ],
+            [
+                InlineKeyboardButton("Back", "bsettings_menu"),
+                InlineKeyboardButton("Close", "misc_close")
+            ]
+        ])
     
     elif query_data == "images":
         MemoryDB.insert(DBConstants.DATA_CENTER, user.id, {
@@ -185,11 +191,16 @@ async def query_bot_settings(_, query: CallbackQuery):
             "<blockquote>**Note:** Use `Restore Database` with caution!</blockquote>"
         )
 
-        btn_data = [
-            {"Restore Database": "bsettings_restoredb", "Wipe Memory Cache": "bsettings_wipe_memory"},
-            {"Back": "bsettings_menu", "Close": "misc_close"}
-        ]
-        is_refresh_btn = False
+        btn_data = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("Restore Database", "bsettings_restoredb"),
+                InlineKeyboardButton("Wipe Memory Cache", "bsettings_wipe_memory")
+            ],
+            [
+                InlineKeyboardButton("Back", "bsettings_menu"),
+                InlineKeyboardButton("Close", "misc_close")
+            ]
+        ])
     
     elif query_data == "restoredb":
         text = (
@@ -197,11 +208,15 @@ async def query_bot_settings(_, query: CallbackQuery):
             "**• Restore MongoDB Database?**"
         )
 
-        btn_data = [
-            {"YES": "bsettings_restoredb_confirm", "NO": "bsettings_database"},
-            {"Back": "bsettings_database"}
-        ]
-        is_refresh_btn = False
+        btn_data = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("YES", "bsettings_restoredb_confirm"),
+                InlineKeyboardButton("NO", "bsettings_database")
+            ],
+            [
+                InlineKeyboardButton("Back", "bsettings_database")
+            ]
+        ])
     
     elif query_data == "restoredb_confirm":
         await query.answer("Restoring Bot Data...")
@@ -240,20 +255,26 @@ async def query_bot_settings(_, query: CallbackQuery):
     
     # common editing keyboard buttons
     if is_editing_btn:
-        btn_data = [
-            {"Edit Value": "database_edit_value", "Remove Value": "database_rm_value"},
-            {"Back": "bsettings_menu", "Close": "misc_close"}
-        ]
+        btn_data = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("Refresh", query.data)
+            ],
+            [
+                InlineKeyboardButton("Edit Value", "database_edit_value"),
+                InlineKeyboardButton("Remove Value", "database_rm_value")
+            ],
+            [
+                InlineKeyboardButton("Back", "bsettings_menu"),
+                InlineKeyboardButton("Close", "misc_close")
+            ]
+        ])
     
-    # `btn_data` pre-determined & added Refresh btn
-    if is_refresh_btn: btn_data.insert(0, {"Refresh": query.data})
-    btn = BuildKeyboard.cbutton(btn_data)
     # Global Reply
     try:
-        await query.edit_message_caption(text, reply_markup=btn)
+        await query.edit_message_caption(text, reply_markup=btn_data)
     except BadRequest:
         try:
-            await query.edit_message_text(text, reply_markup=btn)
+            await query.edit_message_text(text, reply_markup=btn_data)
         except BadRequest:
             await query.answer()
         except Exception as e:

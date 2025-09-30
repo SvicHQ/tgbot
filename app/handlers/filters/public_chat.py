@@ -1,9 +1,8 @@
 from pyrogram import filters
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.enums import ChatMemberStatus
 
 from app import bot, TL_LANG_CODES_URL
-from app.helpers import BuildKeyboard
 from app.utils.database import DBConstants, database_search
 
 from .edit_database import edit_database
@@ -55,8 +54,10 @@ async def filter_public_chat(_, message: Message):
     chat_lang = chat_data.get("lang")
 
     if auto_tr and not chat_lang:
-        btn = BuildKeyboard.ubutton([{"Language code's": TL_LANG_CODES_URL}])
-        await message.reply_text("Chat language code wasn't found! Use /settings to set chat language.", reply_markup=btn)
+        await message.reply_text(
+            "Chat language code wasn't found! Use /settings to set chat language.",
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Language code's", url=TL_LANG_CODES_URL)]])
+        )
     
     elif auto_tr and not filtered_text:
         await autoTranslate(message, user, chat_lang)

@@ -1,10 +1,9 @@
 from pyrogram import filters
-from pyrogram.types import CallbackQuery
+from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.enums import ChatType
 from pyrogram.errors import BadRequest
 
 from app import bot, logger, TL_LANG_CODES_URL
-from app.helpers import BuildKeyboard
 from app.utils.database import DBConstants, MemoryDB
 
 from app.handlers.user_handlers.settings import PvtChatSettingsData
@@ -43,11 +42,10 @@ async def query_chat_settings(_, query: CallbackQuery):
     # variable required for global reply
     is_editing_btn = None
     is_boolean_btn = None
-    is_refresh_btn = True
 
     if query_data == "menu":
         # Handling PRIVATE chat setting
-        if chat.type in [ChatType.PRIVATE]:
+        if chat.type == ChatType.PRIVATE:
             text = PvtChatSettingsData.TEXT.format(
                 user.mention,
                 user.id,
@@ -57,7 +55,6 @@ async def query_chat_settings(_, query: CallbackQuery):
             )
 
             btn_data = PvtChatSettingsData.BUTTONS
-            is_refresh_btn = False
         
         else:
             text = GroupChatSettingsData.TEXT.format(
@@ -76,7 +73,6 @@ async def query_chat_settings(_, query: CallbackQuery):
             )
 
             btn_data = GroupChatSettingsData.BUTTONS
-            is_refresh_btn = False
     
     elif query_data == "lang":
         MemoryDB.insert(DBConstants.DATA_CENTER, chat.id, {
@@ -151,12 +147,23 @@ async def query_chat_settings(_, query: CallbackQuery):
             "<blockquote>**Note:** This will welcome new chat member, if enabled.</blockquote>"
         ).format("Enabled" if memory_data.get("welcome_user") else 'Disabled')
 
-        btn_data = [
-            {"Enable": "database_bool_true", "Disable": "database_bool_false"},
-            {"Welcome Photo": "csettings_welcome_photo"},
-            {"Custom Welcome Message": "csettings_custom_welcome_msg"},
-            {"Back": "csettings_menu", "Close": "csettings_close"}
-        ]
+        btn_data = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("Refresh", query.data)
+            ],
+            [
+                InlineKeyboardButton("Enable", "database_bool_true"),
+                InlineKeyboardButton("Disable", "database_bool_false")
+            ],
+            [
+                InlineKeyboardButton("Welcome Photo", "csettings_welcome_photo"),
+                InlineKeyboardButton("Custom Welcome Message", "csettings_custom_welcome_msg")
+            ],
+            [
+                InlineKeyboardButton("Back", "csettings_menu"),
+                InlineKeyboardButton("Close", "csettings_close")
+            ]
+        ])
     
     elif query_data == "welcome_photo":
         MemoryDB.insert(DBConstants.DATA_CENTER, chat.id, {
@@ -171,10 +178,19 @@ async def query_chat_settings(_, query: CallbackQuery):
             "<blockquote>**Note:**Welcome photo to greet new chat members. (Currently only supports URL photo link)</blockquote>"
         ).format(memory_data.get("welcome_photo") or "-")
 
-        btn_data = [
-            {"Edit Value": "database_edit_value", "Remove Value": "database_rm_value"},
-            {"Back": "csettings_welcome_user", "Close": "csettings_close"}
-        ]
+        btn_data = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("Refresh", query.data)
+            ],
+            [
+                InlineKeyboardButton("Edit Value", "database_edit_value"),
+                InlineKeyboardButton("Remove Value", "database_rm_value")
+            ],
+            [
+                InlineKeyboardButton("Back", "csettings_welcome_user"),
+                InlineKeyboardButton("Close", "csettings_close")
+            ]
+        ])
     
     elif query_data == "custom_welcome_msg":
         MemoryDB.insert(DBConstants.DATA_CENTER, chat.id, {
@@ -195,11 +211,22 @@ async def query_chat_settings(_, query: CallbackQuery):
             "<blockquote>**Note:** Custom welcome message to greet new chat members. (supports telegram formatting)</blockquote>"
         ).format(custom_message)
 
-        btn_data = [
-            {"Set Custom Message": "database_edit_value", "Remove Custom Message": "database_rm_value"},
-            {"Formattings": "csettings_formattings"},
-            {"Back": "csettings_welcome_user", "Close": "csettings_close"}
-        ]
+        btn_data = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("Refresh", query.data)
+            ],
+            [
+                InlineKeyboardButton("Set Custom Message", "database_edit_value"),
+                InlineKeyboardButton("Remove Custom Message", "database_rm_value")
+            ],
+            [
+                InlineKeyboardButton("Formattings", "csettings_formattings")
+            ],
+            [
+                InlineKeyboardButton("Back", "csettings_welcome_user"),
+                InlineKeyboardButton("Close", "csettings_close")
+            ]
+        ])
     
     elif query_data == "formattings":
         text = (
@@ -213,8 +240,12 @@ async def query_chat_settings(_, query: CallbackQuery):
             "• `{chatname}` - chat title"
         )
 
-        btn_data = [{"Back": "csettings_custom_welcome_msg", "Close": "csettings_close"}]
-        is_refresh_btn = False
+        btn_data = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("Back", "csettings_custom_welcome_msg"),
+                InlineKeyboardButton("Close", "csettings_close")
+            ]
+        ])
     
     elif query_data == "farewell_user":
         MemoryDB.insert(DBConstants.DATA_CENTER, chat.id, {
@@ -244,10 +275,20 @@ async def query_chat_settings(_, query: CallbackQuery):
             "<blockquote>**Note:** This will auto Approve or Decline or Do Nothing while a member request to join this Group. (Bot should have add/invite member permission.)</blockquote>"
         ).format(memory_data.get("chat_join_req"))
 
-        btn_data = [
-            {"Approve": "database_value_approve", "Decline": "database_value_decline", "Do Nothing": "database_rm_value"},
-            {"Back": "csettings_menu", "Close": "csettings_close"}
-        ]
+        btn_data = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("Refresh", query.data)
+            ],
+            [
+                InlineKeyboardButton("Approve", "database_value_approve"),
+                InlineKeyboardButton("Decline", "database_value_decline"),
+                InlineKeyboardButton("Do Nothing", "database_rm_value")
+            ],
+            [
+                InlineKeyboardButton("Back", "csettings_menu"),
+                InlineKeyboardButton("Close", "csettings_close")
+            ]
+        ])
     
     elif query_data == "service_messages":
         MemoryDB.insert(DBConstants.DATA_CENTER, chat.id, {
@@ -278,10 +319,20 @@ async def query_chat_settings(_, query: CallbackQuery):
             "The Links Behave action will be triggered if any non-admin member shares a link in the chat.</blockquote>"
         ).format(memory_data.get("links_behave"))
 
-        btn_data = [
-            {"Delete": "database_value_delete", "Convert to base64": "database_value_convert", "Do Nothing": "database_rm_value"},
-            {"Back": "csettings_menu", "Close": "csettings_close"}
-        ]
+        btn_data = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("Refresh", query.data)
+            ],
+            [
+                InlineKeyboardButton("Delete", "database_value_delete"),
+                InlineKeyboardButton("Convert to base64", "database_value_convert"),
+                InlineKeyboardButton("Do Nothing", "database_rm_value")
+            ],
+            [
+                InlineKeyboardButton("Back", "csettings_menu"),
+                InlineKeyboardButton("Close", "csettings_close")
+            ]
+        ])
     
     elif query_data == "allowed_links":
         MemoryDB.insert(DBConstants.DATA_CENTER, chat.id, {
@@ -312,26 +363,41 @@ async def query_chat_settings(_, query: CallbackQuery):
 
     # common editing keyboard buttons
     if is_editing_btn:
-        btn_data = [
-            {"Edit Value": "database_edit_value", "Remove Value": "database_rm_value"},
-            {"Back": "csettings_menu", "Close": "csettings_close"}
-        ]
+        btn_data = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("Refresh", query.data)
+            ],
+            [
+                InlineKeyboardButton("Edit Value", "database_edit_value"),
+                InlineKeyboardButton("Remove Value", "database_rm_value")
+            ],
+            [
+                InlineKeyboardButton("Back", "csettings_menu"),
+                InlineKeyboardButton("Close", "csettings_close")
+            ]
+        ])
     
     if is_boolean_btn:
-        btn_data = [
-            {"Enable": "database_bool_true", "Disable": "database_bool_false"},
-            {"Back": "csettings_menu", "Close": "csettings_close"}
-        ]
+        btn_data = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("Refresh", query.data)
+            ],
+            [
+                InlineKeyboardButton("Enable", "database_bool_true"),
+                InlineKeyboardButton("Disable", "database_bool_false")
+            ],
+            [
+                InlineKeyboardButton("Back", "csettings_menu"),
+                InlineKeyboardButton("Close", "csettings_close")
+            ]
+        ])
     
-    # `btn_data` pre-determined & added Refresh btn
-    if is_refresh_btn: btn_data.insert(0, {"Refresh": query.data})
-    btn = BuildKeyboard.cbutton(btn_data)
     # Global Reply
     try:
-        await query.edit_message_caption(text, reply_markup=btn)
+        await query.edit_message_caption(text, reply_markup=btn_data)
     except BadRequest:
         try:
-            await query.edit_message_text(text, reply_markup=btn)
+            await query.edit_message_text(text, reply_markup=btn_data)
         except BadRequest:
             await query.answer()
         except Exception as e:

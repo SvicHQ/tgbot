@@ -1,6 +1,6 @@
-from pyrogram.types import Message, User
+from pyrogram.types import Message, User, InlineKeyboardButton, InlineKeyboardMarkup
+
 from app import TL_LANG_CODES_URL
-from app.helpers import BuildKeyboard
 from app.modules.translator import translate
 
 async def autoTranslate(message: Message, user: User, lang_code: str):
@@ -14,8 +14,10 @@ async def autoTranslate(message: Message, user: User, lang_code: str):
     response = translate(text, lang_code)
 
     if response is False:
-        btn = BuildKeyboard.ubutton([{"Language code's": TL_LANG_CODES_URL}])
-        await message.reply_text("Invalid language code was given! Use /settings to set chat language.", reply_markup=btn)
+        await message.reply_text(
+            "Invalid language code was given! Use /settings to set chat language.",
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Language code's", url=TL_LANG_CODES_URL)]])
+        )
         return
     
     if not response:
