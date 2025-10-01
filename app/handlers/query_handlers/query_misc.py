@@ -95,8 +95,8 @@ async def query_misc(_, query: CallbackQuery):
     
     elif query_data == "close":
         try:
-            message_id = query.message.message_id
-            await bot.delete_messages([message_id, message_id - 1])
+            message_id = query.message.id
+            await bot.delete_messages(chat.id, [message_id, message_id - 1])
         except:
             try:
                 await query.delete_message()

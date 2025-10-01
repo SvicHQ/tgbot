@@ -40,7 +40,7 @@ async def chat_join_request(_, join_req: ChatJoinRequest):
         elif chat_join_req == "decline":
             await join_req.decline()
     except Exception as e:
-        await chat.send_message(str(e))
+        await bot.send_message(chat.id, str(e))
 
 
 @bot.on_message(filters.new_chat_members)
@@ -76,15 +76,15 @@ async def new_chat_members(_, message: Message):
                 return
             
             if not admin_roles["bot_admin"]:
-                return await chat.send_message("Antibot Error: I'm not an admin in this chat!")
+                return await bot.send_message(chat.id, "Antibot Error: I'm not an admin in this chat!")
             
             if not admin_roles["bot_admin"].privileges.can_restrict_members:
-                return await chat.send_message("Antibot Error: I don't have enough permission to restrict chat members!")
+                return await bot.send_message(chat.id, "Antibot Error: I don't have enough permission to restrict chat members!")
             
             try:
                 await chat.unban_member(victim.id)
             except Exception as e:
-                return await chat.send_message(str(e))
+                return await bot.send_message(chat.id, str(e))
             
             await bot.send_message(chat.id, f"Antibot: {victim.mention} has been kicked from this chat!")
         
@@ -111,12 +111,12 @@ async def new_chat_members(_, message: Message):
             
             if welcome_photo:
                 try:
-                    await chat.send_photo(welcome_photo, greeting_message)
+                    await bot.send_photo(chat.id, welcome_photo, greeting_message)
                     return
                 except Exception as e:
-                    await chat.send_message(str(e))
+                    await bot.send_message(chat.id, str(e))
             
-            await chat.send_message(greeting_message)
+            await bot.send_message(chat.id, greeting_message)
 
 
 @bot.on_message(filters.left_chat_member)

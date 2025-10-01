@@ -1,5 +1,7 @@
 from pyrogram import filters
 from pyrogram.types import Chat, Message
+from pyrogram.enums import ChatMemberStatus
+from pyrogram.errors import UserNotParticipant
 
 from app import bot
 from app.helpers.group_helper import GroupHelper
@@ -35,6 +37,16 @@ async def func_unban(_, message: Message):
         if not user:
             return
     
+    # Checking if victim is banned or not
+    try:
+        victim_status = await chat.get_member(victim.id)
+        if victim_status and victim_status.status != ChatMemberStatus.BANNED:
+            return await message.reply_text(f"{victim.mention} isn't banned in this chat!")
+    except UserNotParticipant:
+        return await message.reply_text(f"{victim.mention} isn't a member of this chat!")
+    except Exception as e:
+        return await message.reply_text(str(e))
+    
     # Getting Admin roles
     admin_roles = await GroupHelper.get_admin_roles(chat, user.id, victim.id)
     
@@ -55,10 +67,7 @@ async def func_unban(_, message: Message):
         return await message.reply_text("I don't have enough permission to unrestrict chat members!")
     
     try:
-        member_exist = await chat.get_member(victim.id)
-        # Need to check here is user exist in group or not , otherwise he will be kicked
-        if not member_exist:
-            await chat.unban_member(victim.id)
+        await chat.unban_member(victim.id)
     except Exception as e:
         return await message.reply_text(str(e))
     

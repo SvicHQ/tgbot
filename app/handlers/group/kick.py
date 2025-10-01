@@ -1,5 +1,9 @@
+from datetime import datetime, timedelta
+
 from pyrogram import filters
 from pyrogram.types import Chat, Message
+from pyrogram.enums import ChatMemberStatus
+from pyrogram.errors import UserNotParticipant
 
 from app import bot
 from app.helpers.group_helper import GroupHelper
@@ -34,6 +38,16 @@ async def func_kick(_, message: Message):
         if not user:
             return
     
+    # Checking if victim is a member of this chat or not
+    try:
+        victim_status = await chat.get_member(victim.id)
+        if victim_status and victim_status.status in [ChatMemberStatus.BANNED, ChatMemberStatus.LEFT, ChatMemberStatus.RESTRICTED]:
+            return await message.reply_text(f"{victim.mention} isn't a member of this chat!")
+    except UserNotParticipant:
+        return await message.reply_text(f"{victim.mention} isn't a member of this chat!")
+    except Exception as e:
+        return await message.reply_text(str(e))
+    
     # Getting Admin roles
     admin_roles = await GroupHelper.get_admin_roles(chat, user.id, victim.id)
     
@@ -54,7 +68,7 @@ async def func_kick(_, message: Message):
         return await message.reply_text("I don't have enough permission to restrict chat members!")
     
     try:
-        await chat.unban_member(victim.id)
+        await chat.ban_member(victim.id, datetime.now() + timedelta(seconds=35))
     except Exception as e:
         return await message.reply_text(str(e))
     

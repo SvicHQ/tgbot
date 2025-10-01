@@ -26,8 +26,8 @@ async def query_db_editing(_, query: CallbackQuery):
         await query.answer("Session Expired.", True)
         # Try to delete messages
         try:
-            message_id = query.message.message_id
-            await bot.delete_messages([message_id, message_id - 1])
+            message_id = query.message.id
+            await bot.delete_messages(chat.id, [message_id, message_id - 1])
         except:
             try:
                 await query.delete_message()
@@ -55,7 +55,8 @@ async def query_db_editing(_, query: CallbackQuery):
 
         timeout = 10
 
-        sent_message = await chat.send_message(
+        sent_message = await bot.send_message(
+            chat.id,
             f"Waiting for a new value (Timeout: {timeout}s): ",
             reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Cancel", "database_cancel_editing")]])
         )
@@ -77,7 +78,7 @@ async def query_db_editing(_, query: CallbackQuery):
             if data_center.get("message_id"):
                 message_ids.append(data_center.get("message_id"))
             
-            await bot.delete_messages(message_ids)
+            await bot.delete_messages(chat.id, message_ids)
         except:
             pass
 

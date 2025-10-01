@@ -26,5 +26,6 @@ async def func_adminlist(_, message: Message):
     
     await message.reply_text(
         f"<blockquote>{chat.title}</blockquote>\n\n"
-        f"{owner}{admins}"
+        f"{owner}{admins}",
+        disable_notification=True # Silently send message (not works?)
     )

@@ -25,18 +25,22 @@ class GroupHelper:
 
         async for admin in chat.get_members(filter=ChatMembersFilter.ADMINISTRATORS):
             uid, status = admin.user.id, admin.status
-
-            if user_id and uid == user_id:
+            # User (Who has sent command) Permission Check
+            if user_id and uid == user_id: # Always Check roles separatly, not in single ifelse loop
                 if status == ChatMemberStatus.ADMINISTRATOR:
                     roles["user_admin"] = admin
                 elif status == ChatMemberStatus.OWNER:
                     roles["user_owner"] = admin
-            elif victim_id and uid == victim_id:
+            
+            # Victim Permission Check
+            if victim_id and uid == victim_id:
                 if status == ChatMemberStatus.ADMINISTRATOR:
                     roles["victim_admin"] = admin
                 elif status == ChatMemberStatus.OWNER:
                     roles["victim_owner"] = admin
-            elif uid == bot.me.id:
+            
+            # Bot Admin Permission Check
+            if uid == bot.me.id:
                 roles["bot_admin"] = admin
         
         return roles

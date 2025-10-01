@@ -1,5 +1,5 @@
 from pyrogram import filters
-from pyrogram.types import Chat, Message
+from pyrogram.types import Chat, Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 from app import bot
 from app.helpers.group_helper import GroupHelper
@@ -35,10 +35,15 @@ async def func_unpinall(_, message: Message):
     if not admin_roles["bot_admin"].privileges.can_pin_messages:
         return await message.reply_text("I don't have enough permission to unpin messages!")
     
-    try:
-        await chat.unpin_all_messages()
-    except Exception as e:
-        return await message.reply_text(str(e))
-    
-    if not is_silent:
-        await message.reply_text("Chat's all pinned messages has been unpinned!")
+    await message.reply_text(
+        "Unpin all pinned message of this chat?",
+        reply_markup=InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("⚠️ Yes", f"admin_unpinall_{is_silent}_{user.id}"),
+                InlineKeyboardButton("No", "misc_close")
+            ],
+            [
+                InlineKeyboardButton("Close", "misc_close")
+            ]
+        ])
+    )

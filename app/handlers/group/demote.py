@@ -1,5 +1,5 @@
 from pyrogram import filters
-from pyrogram.types import Chat, Message
+from pyrogram.types import Chat, Message, ChatPrivileges
 
 from app import bot
 from app.helpers.group_helper import GroupHelper
@@ -44,6 +44,9 @@ async def func_demote(_, message: Message):
     if admin_roles["victim_owner"]:
         return await message.reply_text("I'm not going to demote chat owner! You must be kidding!")
     
+    if not admin_roles["victim_admin"]:
+        return await message.reply_text(f"{victim.mention} isn't an admin in this chat!")
+    
     if admin_roles["user_admin"] and not admin_roles["user_admin"].privileges.can_promote_members:
         return await message.reply_text("You don't have enough permission to demote chat members!")
     
@@ -54,7 +57,8 @@ async def func_demote(_, message: Message):
         return await message.reply_text("I don't have enough permission to demote chat members!")
     
     try:
-        await chat.promote_member(victim.id)
+        # Default `can_manage_chat` is True so I made it false so chat member will be demoted
+        await chat.promote_member(victim.id, ChatPrivileges(can_manage_chat=False))
     except Exception as e:
         return await message.reply_text(str(e))
     

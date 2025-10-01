@@ -110,7 +110,7 @@ async def query_broadcast(_, query: CallbackQuery):
         except BadRequest:
             await query.edit_message_caption(text, reply_markup=broadcastData)
         except Exception as e:
-            return await chat.send_message(str(e))
+            return await bot.send_message(chat.id, str(e))
 
         broadcastStartTime = time()
 
@@ -177,7 +177,7 @@ async def query_broadcast(_, query: CallbackQuery):
             except BadRequest:
                 await query.edit_message_caption(updateText, reply_markup=btn)
             except Exception as e:
-                await chat.send_message(f"An error occured (broadcast still running): {e}")
+                await bot.send_message(chat.id, f"An error occured (broadcast still running): {e}")
 
             await asyncio.sleep(0.5) # sleep for 0.5 sec
         
@@ -195,7 +195,7 @@ async def query_broadcast(_, query: CallbackQuery):
         except BadRequest:
             await query.edit_message_caption(updateText)
         except Exception as e:
-            await chat.send_message(f"An error occured (After broadcast done): {e}")
+            await bot.send_message(chat.id, f"An error occured (After broadcast done): {e}")
 
         if exception_users_id:
             exception_file = BytesIO(", ".join(exception_users_id).encode())

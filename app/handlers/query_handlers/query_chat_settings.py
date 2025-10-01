@@ -22,8 +22,8 @@ async def query_chat_settings(_, query: CallbackQuery):
     if not data_center:
         await query.answer("Session Expired.", True)
         try:
-            message_id = query.message.message_id
-            await bot.delete_messages([message_id, message_id - 1])
+            message_id = query.message.id
+            await bot.delete_messages(chat.id, [message_id, message_id - 1])
         except:
             try:
                 await query.delete_message()
@@ -202,7 +202,7 @@ async def query_chat_settings(_, query: CallbackQuery):
         custom_message = memory_data.get("custom_welcome_msg") or "-"
 
         if len(str(custom_message)) > 500:
-            await chat.send_message(f"Custom Greeting Message:\n\n{custom_message}")
+            await bot.send_message(chat.id, f"Custom Greeting Message:\n\n{custom_message}")
             custom_message = "Message is too long."
         
         text = (
@@ -352,8 +352,8 @@ async def query_chat_settings(_, query: CallbackQuery):
     
     elif query_data == "close":
         try:
-            message_id = query.message.message_id
-            await bot.delete_messages([message_id, message_id - 1])
+            message_id = query.message.id
+            await bot.delete_messages(chat.id, [message_id, message_id - 1])
         except:
             try:
                 await query.delete_message()

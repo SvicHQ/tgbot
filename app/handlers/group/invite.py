@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from pyrogram import filters
 from pyrogram.types import Chat, Message
@@ -37,15 +37,14 @@ async def func_invite(_, message: Message):
         return await message.reply_text("I don't have enough permission to invite members in this chat!")
     
     try:
-        expire_date = datetime.datetime.now() + datetime.timedelta(days=7)
-        data = await bot.create_chat_invite_link(chat.id, name, expire_date)
+        data = await bot.create_chat_invite_link(chat.id, name, datetime.now() + timedelta(days=7))
     except Exception as e:
         return await message.reply_text(str(e))
     
     await message.reply_text(
         f"**Invite link:** `{data.invite_link}`\n"
-        f"**Name:** `{data.name}`\n"
+        f"**Name:** `{data.name or '-'}`\n"
         f"**Expire date:** `{data.expire_date}`\n"
-        f"**Member limit:** `{data.member_limit}`\n"
-        f"**Created by:** `{data.creator}`"
+        f"**Member limit:** `{data.member_limit or 'infinite'}`\n"
+        f"**Created by:** `{data.creator or '-'}`"
     )

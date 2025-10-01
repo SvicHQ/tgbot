@@ -60,6 +60,28 @@ async def query_groupManagement(_, query: CallbackQuery):
         
         await query.edit_message_text(f"Good luck {victim_mention or f'`{victim_id}`'}! Your warnings has been removed by _{user.mention}_.")
     
+    elif query_data.startswith("unpinall_"):
+        # expecting leavechat_[boolean]_[adminUserID]
+        data = query_data.split("_")
+        is_silent = True if data[1].lower() == "true" else False
+        user_id = data[2]
+
+        if user_id != str(user.id):
+            return await query.answer("Access Denied!")
+        
+        try:
+            await chat.unpin_all_messages()
+        except Exception as e:
+            return await query.message.edit_text(str(e))
+        
+        if not is_silent:
+            await query.message.edit_text(f"Chat's all pinned messages has been unpinned by {user.mention}!")
+        else:
+            try:
+                await query.message.delete()
+            except:
+                pass
+    
     elif query_data.startswith("leavechat_"):
         # expecting leavechat_[adminUserID]
         user_id = query_data.removeprefix("leavechat_")
