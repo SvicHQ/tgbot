@@ -10,6 +10,7 @@ from app import bot
 from app.modules.utils import UTILITY
 from app.utils.database import DBConstants, MemoryDB, MongoDB
 
+
 @bot.on_callback_query(filters.regex(r"broadcast_[A-Za-z0-9]+"))
 async def query_broadcast(_, query: CallbackQuery):
     chat = query.message.chat

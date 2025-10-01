@@ -3,6 +3,7 @@ from pyrogram.types import Message, User, InlineKeyboardButton, InlineKeyboardMa
 from app import TL_LANG_CODES_URL
 from app.modules.translator import translate
 
+
 async def autoTranslate(message: Message, user: User, lang_code: str):
     """
     :param message: Message Class

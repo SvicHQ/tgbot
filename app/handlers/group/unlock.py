@@ -5,6 +5,7 @@ from app import bot
 from app.helpers.group_helper import GroupHelper
 from app.utils.decorators.pm_error import pm_error
 
+
 @bot.on_message(filters.command(["unlock", "sunlock"], ["/", "!", "-", "."]))
 @pm_error
 async def func_unlock(_, message: Message):

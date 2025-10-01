@@ -6,6 +6,7 @@ from pyrogram.errors import BadRequest
 from app import bot, logger, ORIGINAL_BOT_USERNAME, ORIGINAL_BOT_ID
 from app.utils.database import database_add_user, MemoryDB
 
+
 @bot.on_message(filters.command("start", ["/", "!", "-", "."]) & ~filters.regex("help"))
 async def func_start(_, message: Message):
     user = message.from_user or message.sender_chat

@@ -6,6 +6,7 @@ from app.helpers.args_extractor import extract_cmd_args
 from app.utils.decorators.pm_only import pm_only
 from app.utils.decorators.sudo_users import require_sudo
 
+
 @bot.on_message(filters.command("invitelink", ["/", "!", "-", "."]))
 @pm_only
 @require_sudo

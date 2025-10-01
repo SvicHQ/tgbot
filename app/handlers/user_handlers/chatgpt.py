@@ -7,6 +7,7 @@ from app import bot
 from app.helpers.args_extractor import extract_cmd_args
 from app.modules import llm
 
+
 @bot.on_message(filters.command("gpt", ["/", "!", "-", "."]))
 async def func_gpt(_, message: Message):
     user = message.from_user or message.sender_chat

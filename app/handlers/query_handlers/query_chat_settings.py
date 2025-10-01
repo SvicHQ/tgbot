@@ -9,6 +9,7 @@ from app.utils.database import DBConstants, MemoryDB
 from app.handlers.user_handlers.settings import PvtChatSettingsData
 from app.handlers.group.chat_settings import GroupChatSettingsData
 
+
 @bot.on_callback_query(filters.regex(r"csettings_[A-Za-z0-9]+"))
 async def query_chat_settings(_, query: CallbackQuery):
     chat = query.message.chat

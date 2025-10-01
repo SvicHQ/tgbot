@@ -7,6 +7,7 @@ from pyrogram.types import Message
 from app import bot
 from app.helpers.args_extractor import extract_cmd_args
 
+
 @bot.on_message(filters.command("ping", ["/", "!", "-", "."]))
 async def func_ping(_, message: Message):
     url = extract_cmd_args(message.text, message.command)

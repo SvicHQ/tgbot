@@ -6,6 +6,7 @@ from app.utils.database import DBConstants, MemoryDB
 from app.utils.decorators.pm_only import pm_only
 from app.utils.decorators.sudo_users import require_sudo
 
+
 @bot.on_message(filters.command("broadcast", ["/", "!", "-", "."]))
 @pm_only
 @require_sudo

@@ -3,6 +3,7 @@ from pyrogram.types import Message
 from app import logger, config
 from app.utils.database import MemoryDB
 
+
 def require_sudo(func):
     """
     :returns list: list of sudo's including **owner_id**

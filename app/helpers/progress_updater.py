@@ -6,6 +6,7 @@ from pyrogram.types import Message
 from app import logger
 from app.modules.utils import UTILITY
 
+
 async def progress_updater(current, total, message: Message, extraText=None, startTime=None):
     """
     :param current: Bytes transferred so far

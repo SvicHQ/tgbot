@@ -5,6 +5,7 @@ from app import bot
 from app.helpers.args_extractor import extract_cmd_args
 from app.utils.decorators.sudo_users import require_sudo
 
+
 @bot.on_message(filters.command("say", ["/", "!", "-", "."]))
 @require_sudo
 async def func_say(_, message: Message):

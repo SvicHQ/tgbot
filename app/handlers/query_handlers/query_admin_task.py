@@ -5,6 +5,7 @@ from app import bot
 from app.helpers.group_helper import GroupHelper
 from app.utils.database import DBConstants, database_search, MemoryDB, MongoDB
 
+
 @bot.on_callback_query(filters.regex(r"admin_[A-Za-z0-9]+"))
 async def query_groupManagement(_, query: CallbackQuery):
     chat = query.message.chat

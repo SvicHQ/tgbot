@@ -7,6 +7,7 @@ from app.helpers.args_extractor import extract_cmd_args
 from app.utils.database import DBConstants, database_search, MemoryDB, MongoDB
 from app.utils.decorators.pm_error import pm_error
 
+
 @bot.on_message(filters.command(["warn", "dwarn"], ["/", "!", "-", "."]))
 @pm_error
 async def func_warn(_, message: Message):

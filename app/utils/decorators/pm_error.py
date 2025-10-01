@@ -3,6 +3,7 @@ from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.enums import ChatType
 from app import bot, logger
 
+
 def pm_error(func):
     @wraps(func)
     async def wraper(_, message: Message):

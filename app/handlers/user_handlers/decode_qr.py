@@ -6,6 +6,7 @@ from pyrogram.types import Message
 from app import bot
 from app.modules.qr import QR
 
+
 @bot.on_message(filters.command("decqr", ["/", "!", "-", "."]))
 async def func_decqr(_, message: Message):
     user = message.from_user or message.sender_chat

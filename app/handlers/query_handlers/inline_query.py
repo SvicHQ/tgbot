@@ -7,6 +7,7 @@ from app import bot
 from app.utils.database import DBConstants, MemoryDB
 from app.modules.utils import UTILITY
 
+
 @bot.on_inline_query()
 async def inline_query_handler(_, query: InlineQuery):
     user = query.from_user

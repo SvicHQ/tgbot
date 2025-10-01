@@ -8,6 +8,7 @@ from app.modules.utils import UTILITY
 from app.utils.database import DBConstants, database_search, MemoryDB, MongoDB
 from app.utils.decorators.pm_error import pm_error
 
+
 @bot.on_message(filters.command("whisper", ["/", "!", "-", "."]))
 @pm_error
 async def func_whisper(_, message: Message):

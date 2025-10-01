@@ -6,6 +6,7 @@ from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from app import bot, PSNDL_WEBSITE_URL
 from app.helpers.args_extractor import extract_cmd_args
 
+
 @bot.on_message(filters.command("psndl", ["/", "!", "-", "."]))
 async def func_psndl(_, message: Message):
     game_name = extract_cmd_args(message.text, message.command)

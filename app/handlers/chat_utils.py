@@ -5,6 +5,7 @@ from app import bot
 from app.helpers.group_helper import GroupHelper
 from app.utils.database import DBConstants, database_search
 
+
 @bot.on_message(filters.service)
 async def filter_service_message(_, message: Message):
     chat_data = database_search(DBConstants.CHATS_DATA, "chat_id", message.chat.id)

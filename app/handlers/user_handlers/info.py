@@ -5,6 +5,7 @@ from pyrogram.enums import MessageOriginType
 from app import bot
 from app.helpers.args_extractor import extract_cmd_args
 
+
 @bot.on_message(filters.command("info", ["/", "!", "-", "."]))
 async def func_info(_, message: Message):
     user = message.from_user or message.sender_chat

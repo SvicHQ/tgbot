@@ -5,27 +5,28 @@ from pyrogram.enums import ChatMembersFilter, ChatMemberStatus
 from app import bot
 from app.utils.decorators.pm_error import pm_error
 
+
 @bot.on_message(filters.command("adminlist", ["/", "!", "-", "."]))
 @pm_error
 async def func_adminlist(_, message: Message):
     chat = message.chat
 
-    owner = "**Owner:**\n"
-    admins = ""
+    owner, admins = [], []
 
-    async for admin in chat.get_members(filter=ChatMembersFilter.ADMINISTRATORS):
-        admin_name = "Anonymous" if admin.privileges.is_anonymous else admin.user.mention
-        formatted_text = f"• {admin_name} - <i>{admin.custom_title or '~'}</i>\n"
-        
-        if admin.status == ChatMemberStatus.OWNER:
-            owner += formatted_text
-        elif not admin.user.is_bot:
-            admins += formatted_text
-        
-    if admins: admins = f"\n**Admin's:**\n{admins}"
-    
-    await message.reply_text(
-        f"<blockquote>{chat.title}</blockquote>\n\n"
-        f"{owner}{admins}",
-        disable_notification=True # Silently send message (not works?)
-    )
+    async for member in chat.get_members(filter=ChatMembersFilter.ADMINISTRATORS):
+        name = "Anonymous" if member.privileges.is_anonymous else member.user.mention
+        title = member.custom_title or "~"
+        formatted = f"• {name} - <i>{title}</i>"
+
+        if member.status == ChatMemberStatus.OWNER:
+            owner.append(formatted)
+        elif not member.user.is_bot:
+            admins.append(formatted)
+
+    text = f"<blockquote>{chat.title}</blockquote>\n\n"
+    if owner:
+        text += "**Owner:**\n" + "\n".join(owner)
+    if admins:
+        text += "\n\n**Admins:**\n" + "\n".join(admins)
+
+    await message.reply_text(text)

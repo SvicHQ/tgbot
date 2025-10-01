@@ -8,6 +8,7 @@ from app.helpers.group_helper import GroupHelper
 from app.helpers.args_extractor import extract_cmd_args
 from app.utils.decorators.pm_error import pm_error
 
+
 @bot.on_message(filters.command(["invite"], ["/", "!", "-", "."]))
 @pm_error
 async def func_invite(_, message: Message):

@@ -5,6 +5,7 @@ from app import bot, PSNDL_WEBSITE_URL
 # from app.helpers.args_extractor import extract_cmd_args
 # from app.modules.psndl_module import PSNDL
 
+
 @bot.on_message(filters.command("rap", ["/", "!", "-", "."]))
 async def func_rap(_, message: Message):
     await message.reply_text(

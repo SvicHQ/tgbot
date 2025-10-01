@@ -1,8 +1,10 @@
 from pyrogram import filters
 from pyrogram.types import Message
+
 from app import bot
 from app.helpers.args_extractor import extract_cmd_args
 from app.modules.base64 import BASE64
+
 
 @bot.on_message(filters.command("encode", ["/", "!", "-", "."]))
 async def func_encode(_, message: Message):

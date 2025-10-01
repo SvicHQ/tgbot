@@ -11,6 +11,7 @@ from app.utils.database import DBConstants, MemoryDB, MongoDB
 
 from app.handlers.owner_handlers.bsettings import BotSettingsData
 
+
 @bot.on_callback_query(filters.regex(r"bsettings_[A-Za-z0-9]+"))
 async def query_bot_settings(_, query: CallbackQuery):
     user = query.from_user

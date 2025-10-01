@@ -11,6 +11,7 @@ from app.utils.database import DBConstants, MongoDB
 
 from app.handlers.core.help import HelpMenuData
 
+
 @bot.on_callback_query(filters.regex(r"help_menu_[A-Za-z0-9]+"))
 async def query_help_menu(_, query: CallbackQuery):
     user = query.from_user

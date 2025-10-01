@@ -2,7 +2,8 @@ import asyncio
 from functools import wraps
 from pyrogram.types import Message
 from pyrogram.enums import ChatType
-from app import bot, logger
+from app import logger
+
 
 def pm_only(func):
     @wraps(func)

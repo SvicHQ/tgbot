@@ -5,6 +5,7 @@ from app import bot
 from app.helpers.args_extractor import extract_cmd_args
 from app.modules.shrinkme import shortener_url
 
+
 @bot.on_message(filters.command("shorturl", ["/", "!", "-", "."]))
 async def func_shorturl(_, message: Message):
     re_msg = message.reply_to_message

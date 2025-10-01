@@ -9,6 +9,7 @@ from app.utils.database import DBConstants, MemoryDB
 from app.utils.decorators.pm_only import pm_only
 from app.utils.decorators.sudo_users import require_sudo
 
+
 class BotSettingsData:
     TEXT = (
         "<blockquote>**Bot Settings**</blockquote>\n\n"
@@ -44,6 +45,7 @@ class BotSettingsData:
             InlineKeyboardButton("Close", "misc_close")
         ]
     ])
+
 
 @bot.on_message(filters.command("bsettings", ["/", "!", "-", "."]))
 @pm_only

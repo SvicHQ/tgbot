@@ -5,6 +5,7 @@ from app import bot
 from app.helpers.args_extractor import extract_cmd_args
 from app.modules.utils import UTILITY
 
+
 @bot.on_message(filters.command("calc", ["/", "!", "-", "."]))
 async def func_calc(_, message: Message):
     re_msg = message.reply_to_message

@@ -7,6 +7,7 @@ from pyrogram.errors import BadRequest
 from app import bot, logger
 from app.modules.freeimagehost import upload_image
 
+
 @bot.on_message(filters.command("imgtolink", ["/", "!", "-", "."]))
 async def func_imgtolink(_, message: Message):
     re_msg = message.reply_to_message

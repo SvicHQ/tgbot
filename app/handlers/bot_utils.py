@@ -5,6 +5,7 @@ from pyrogram.enums import ChatType, ChatMemberStatus
 from app import bot
 from app.utils.database import DBConstants, MemoryDB, MongoDB
 
+
 @bot.on_chat_member_updated(filters.me)
 async def bot_chats_tracker(_, member_update: ChatMemberUpdated):
     """**Tracks GROUP/PRIVATE chat (where bot is added/removed/promoted/demoted)**"""

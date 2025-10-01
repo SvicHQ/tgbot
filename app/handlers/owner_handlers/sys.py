@@ -10,6 +10,7 @@ from app.utils.database import MemoryDB
 from app.modules.utils import UTILITY
 from app.utils.decorators.sudo_users import require_sudo
 
+
 @bot.on_message(filters.command("sys", ["/", "!", "-", "."]))
 @require_sudo
 async def func_sys(_, message: Message):

@@ -5,6 +5,7 @@ from app import bot
 from app.helpers.args_extractor import extract_cmd_args
 from app.modules.omdb_info import fetch_movieinfo
 
+
 @bot.on_message(filters.command("movie", ["/", "!", "-", "."]))
 async def func_movie(_, message: Message):
     movie_name = extract_cmd_args(message.text, message.command)

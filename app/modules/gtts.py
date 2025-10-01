@@ -3,6 +3,7 @@ from gtts import gTTS
 from io import BytesIO
 from app import logger
 
+
 def text_to_speech(text, lang_code="en"):
     """
     *Convert text to speech and return audio bytes*\n

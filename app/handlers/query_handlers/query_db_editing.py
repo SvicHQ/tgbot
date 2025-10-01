@@ -6,6 +6,7 @@ from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMa
 from app import bot
 from app.utils.database import DBConstants, MemoryDB, MongoDB
 
+
 @bot.on_callback_query(filters.regex(r"database_[A-Za-z0-9]+"))
 async def query_db_editing(_, query: CallbackQuery):
     """

@@ -3,6 +3,7 @@ from pyrogram.types import Message
 from pyrogram.enums import MessageOriginType
 from app import bot
 
+
 @bot.on_message(filters.command("id", ["/", "!", "-", "."]))
 async def func_id(_, message: Message):
     chat = message.chat

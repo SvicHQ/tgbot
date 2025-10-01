@@ -1,5 +1,6 @@
 from app import logger
 
+
 def extract_cmd_args(text, commands, prefixes=None):
     """
     Extracts args from given text by removing command & prefixes.

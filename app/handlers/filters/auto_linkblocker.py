@@ -3,6 +3,7 @@ from pyrogram.types import Message, User
 from app.modules.re_link import RE_LINK
 from app.modules.base64 import BASE64
 
+
 async def autoLinkBlocker(message: Message, user: User, link_rules: dict):
     """
     :param message: Message Class

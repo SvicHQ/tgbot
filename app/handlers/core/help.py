@@ -8,6 +8,7 @@ from pyrogram.errors import BadRequest
 from app import bot, logger
 from app.utils.database import MemoryDB, database_add_user
 
+
 class HelpMenuData:
     TEXT = (
         "<blockquote>**Help Menu**</blockquote>\n\n"

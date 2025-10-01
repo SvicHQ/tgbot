@@ -5,6 +5,7 @@ from app import bot
 from app.utils.database import DBConstants, database_search
 from app.utils.decorators.pm_error import pm_error
 
+
 @bot.on_message(filters.command("triggers", ["/", "!", "-", "."]))
 @pm_error
 async def func_triggers(_, message: Message):

@@ -4,6 +4,7 @@ from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from app import bot
 from app.utils.database import DBConstants, database_search, MemoryDB
 
+
 class PvtChatSettingsData:
     TEXT = (
         "<blockquote>**Chat Settings**</blockquote>\n\n"

@@ -1,5 +1,6 @@
 from pyrogram.types import Message, User, Chat
 
+
 async def autoTriggers(message: Message, user: User, chat: Chat, triggers: dict):
     """
     :param message: Message class

@@ -1,6 +1,7 @@
 from app import logger
 from base64 import b64decode, b64encode
 
+
 class BASE64:
     @staticmethod
     def decode(base64):
@@ -9,6 +10,7 @@ class BASE64:
             return decoded_text if decoded_text else None
         except Exception as e:
             logger.error(e)
+
 
     @staticmethod
     def encode(text):

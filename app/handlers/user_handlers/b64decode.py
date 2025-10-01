@@ -5,6 +5,7 @@ from app import bot
 from app.helpers.args_extractor import extract_cmd_args
 from app.modules.base64 import BASE64
 
+
 @bot.on_message(filters.command("decode", ["/", "!", "-", "."]))
 async def func_decode(_, message: Message):
     re_msg = message.reply_to_message

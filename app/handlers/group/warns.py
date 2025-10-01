@@ -6,6 +6,7 @@ from app.helpers.group_helper import GroupHelper
 from app.utils.database import DBConstants, database_search
 from app.utils.decorators.pm_error import pm_error
 
+
 @bot.on_message(filters.command("warns", ["/", "!", "-", "."]))
 @pm_error
 async def func_warns(_, message: Message):

@@ -5,6 +5,7 @@ from app import bot
 from app.helpers.args_extractor import extract_cmd_args
 from app.modules.weather import weather_info
 
+
 @bot.on_message(filters.command("weather", ["/", "!", "-", "."]))
 async def func_weather(_, message: Message):
     location = extract_cmd_args(message.text, message.command)

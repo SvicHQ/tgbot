@@ -5,6 +5,7 @@ from time import time
 from aiohttp import ClientSession, ClientTimeout
 from app import logger
 
+
 class UTILITY:
     @staticmethod
     def createProgressBar(percentValue, barSize=10) -> str:

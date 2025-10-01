@@ -4,6 +4,7 @@ from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMa
 from app import bot
 from app.utils.database import DBConstants, MemoryDB, MongoDB, database_search
 
+
 @bot.on_callback_query(filters.regex(r"misc_[A-Za-z0-9]+"))
 async def query_misc(_, query: CallbackQuery):
     chat = query.message.chat

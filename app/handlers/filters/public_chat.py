@@ -10,6 +10,7 @@ from .auto_linkblocker import autoLinkBlocker
 from .auto_translate import autoTranslate
 from .auto_triggers import autoTriggers
 
+
 @bot.on_message(filters.group & ~filters.regex(r"^[\/!\-.]"))
 async def filter_public_chat(_, message: Message):
     chat = message.chat

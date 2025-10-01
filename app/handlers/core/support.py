@@ -5,6 +5,7 @@ from app import bot, config, logger
 from app.utils.database import MemoryDB, DBConstants
 from app.utils.decorators.pm_only import pm_only
 
+
 @bot.on_message(filters.command("support", ["/", "!", "-", "."]))
 @pm_only
 async def init_support_conv(_, message: Message):

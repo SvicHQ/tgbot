@@ -9,6 +9,7 @@ from app.handlers.core.support import support_state_one
 from .edit_database import edit_database
 from .auto_translate import autoTranslate
 
+
 @bot.on_message(filters.private & ~filters.regex(r"^[\/!\-.]"))
 async def filter_private_chat(_, message: Message):
     chat = message.chat

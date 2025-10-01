@@ -5,6 +5,7 @@ from app import bot
 from app.helpers.group_helper import GroupHelper
 from app.utils.database import DBConstants, MemoryDB, database_search
 
+
 class GroupChatSettingsData:
     TEXT = (
         "<blockquote>**Chat Settings**</blockquote>\n\n"

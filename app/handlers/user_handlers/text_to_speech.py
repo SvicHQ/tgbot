@@ -7,6 +7,7 @@ from app import bot, TTS_LANG_CODES_URL
 from app.helpers.args_extractor import extract_cmd_args
 from app.modules.gtts import text_to_speech
 
+
 @bot.on_message(filters.command("tts", ["/", "!", "-", "."]))
 async def func_tts(_, message: Message):
     user = message.from_user or message.sender_chat

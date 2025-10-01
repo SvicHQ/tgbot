@@ -3,6 +3,7 @@ from io import BytesIO
 from aiohttp import ClientSession, FormData, ServerTimeoutError
 from app import logger
 
+
 async def upload_image(image):
     """
     :param URL/BASE64/Bytes: *image URL or BASE64 string or BytesIO/Binary open(example, 'rb')*

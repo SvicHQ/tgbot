@@ -7,6 +7,7 @@ from app.helpers.args_extractor import extract_cmd_args
 from app.modules.translator import fetch_lang_codes, translate
 from app.utils.database import DBConstants, database_search
 
+
 @bot.on_message(filters.command("tr", ["/", "!", "-", "."]))
 async def func_tr(_, message: Message):
     chat = message.chat

@@ -1,5 +1,6 @@
 import re
 
+
 class RE_LINK:
     @staticmethod
     def detectLinks(text):
@@ -10,6 +11,7 @@ class RE_LINK:
         pattern = r"(https?://)?(www\.)?([a-zA-Z0-9-]+\.[a-zA-Z]{2,})(/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]*)?"
         links = re.findall(pattern, text)
         return ["".join(link) for link in links]
+    
     
     @staticmethod
     def extractDomainName(link):
