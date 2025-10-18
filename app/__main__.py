@@ -72,7 +72,7 @@ async def server_alive():
                         logger.warning(f"{server_url} is down or unreachable. ❌ - code - {response.status}")
         except Exception as e:
             logger.error(f"{server_url} > {e}")
-        await asyncio.sleep(180) # 3 min
+        await asyncio.sleep(60) # 1 min
 
 
 # async def default_error_handler(_, message: Message):

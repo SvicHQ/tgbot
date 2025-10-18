@@ -1,4 +1,5 @@
 {
     "_comment": "major.minor.patch.commits",
-    "__version__": "2.0.0.581"
+    "__status__": "Beta",
+    "__version__": "2.0.0.582"
 }

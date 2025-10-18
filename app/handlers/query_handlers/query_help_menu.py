@@ -6,7 +6,7 @@ from pyrogram import filters
 from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors import BadRequest
 
-from app import bot, logger, BOT_UPTIME, __version__
+from app import bot, logger, BOT_UPTIME, __version__, __versionStatus__
 from app.utils.database import DBConstants, MongoDB
 
 from app.handlers.core.help import HelpMenuData
@@ -165,19 +165,7 @@ async def query_help_menu(_, query: CallbackQuery):
     elif query_data == "botinfo":
         await query.answer("Getting information...")
 
-        database_info = MongoDB.info()
-
-        i_users_data = database_info.get(DBConstants.USERS_DATA)
-        i_chats_data = database_info.get(DBConstants.CHATS_DATA)
-
-        t_users_count = i_users_data.get("quantity") if i_users_data else "Unknown"
-        t_chats_count = i_chats_data.get("quantity") if i_chats_data else "Unknown"
-
-        active_status = MongoDB.find(DBConstants.USERS_DATA, "active_status")
-        active_users = active_status.count(True)
-        inactive_users = active_status.count(False)
-
-        # Systen Uptime Calculating
+        # System Uptime Calculating
         sys_uptime = timedelta(seconds=time() - psutil.boot_time())
 
         sys_days = sys_uptime.days
@@ -190,22 +178,30 @@ async def query_help_menu(_, query: CallbackQuery):
         bot_days = bot_uptime.days
         bot_hours, remainder = divmod(bot_uptime.seconds, 3600)
         bot_minute = remainder / 60
-        
+
         text = (
-            "<blockquote>`**» bot.info()**`</blockquote>\n\n"
+            "<blockquote>**`» bot.info()`**</blockquote>\n\n"
 
             f"**• Name:** {bot.me.first_name}\n"
             f"**• ID:** `{bot.me.id}`\n"
             f"**• Username:** {f'@{bot.me.username}' if bot.me.username else '-'}\n\n"
 
-            f"**• Registered users:** `{t_users_count}`\n"
-            f"**• Active users:** `{active_users}`\n"
-            f"**• Inactive users:** `{inactive_users}`\n"
-            f"**• Total chats:** `{t_chats_count}`\n\n"
+            "**• Registered users:** `{t_users_count}`\n"
+            "**• Active users:** `{active_users}`\n"
+            "**• Inactive users:** `{inactive_users}`\n"
+            "**• Total chats:** `{t_chats_count}`\n\n"
 
             f"**• System uptime:** `{int(sys_days)}d {int(sys_hours)}h {int(sys_minute)}m`\n"
             f"**• Bot uptime:** `{int(bot_days)}d {int(bot_hours)}h {int(bot_minute)}m`\n"
-            f"**• Version (stable):** `{__version__}`"
+            f"**• Version ({__versionStatus__}):** `{__version__}`"
+        )
+
+        # text without db info
+        text_without_dbinfo = text.format(
+            t_users_count = "loading...",
+            active_users = "loading...",
+            inactive_users = "loading...",
+            t_chats_count = "loading..."
         )
 
         btn = InlineKeyboardMarkup([
@@ -221,6 +217,35 @@ async def query_help_menu(_, query: CallbackQuery):
                 InlineKeyboardButton("Close", "misc_close")
             ]
         ])
+
+        # sending response without db info (more efficient?)
+        try:
+            await query.edit_message_caption(text_without_dbinfo, reply_markup=btn)
+        except BadRequest:
+            await query.edit_message_text(text_without_dbinfo, reply_markup=btn)
+        except Exception as e:
+            logger.error(e)
+        
+        # loading database info
+        database_info = MongoDB.info()
+
+        i_users_data = database_info.get(DBConstants.USERS_DATA)
+        i_chats_data = database_info.get(DBConstants.CHATS_DATA)
+
+        t_users_count = i_users_data.get("quantity") if i_users_data else "Unknown"
+        t_chats_count = i_chats_data.get("quantity") if i_chats_data else "Unknown"
+
+        active_status = MongoDB.find(DBConstants.USERS_DATA, "active_status")
+        active_users = active_status.count(True)
+        inactive_users = active_status.count(False)
+
+        # final formatting with db info
+        text = text.format(
+            t_users_count = t_users_count,
+            active_users = active_users,
+            inactive_users = inactive_users,
+            t_chats_count = t_chats_count
+        )
     
     # global reply
     try:

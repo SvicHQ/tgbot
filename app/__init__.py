@@ -10,8 +10,12 @@ from pyrogram.enums import ClientPlatform
 from .utils.logger import setup_logging
 from config import CONFIG
 
+
+# Version Tracker
+version_tracker = json.load(open("version.json", "rb"))
+__version__ = version_tracker["__version__"] # major.minor.patch.commits
+__versionStatus__ = version_tracker["__status__"] # Stable / Beta
 # constants
-__version__ = json.load(open("version.json", "rb"))["__version__"] # major.minor.patch.commits
 REQUIRED_DIRS = ["downloads", "sys"]
 ORIGINAL_BOT_USERNAME = "MissCiri_bot"
 ORIGINAL_BOT_ID = 6845693976
@@ -58,12 +62,18 @@ bot = Client(
 
 logger.info(f"""
 Developed by
- ______     __     ______     __  __     ______     __        
-/\  == \   /\ \   /\  ___\   /\ \_\ \   /\  __ \   /\ \       
-\ \  __<   \ \ \  \ \___  \  \ \  __ \  \ \  __ \  \ \ \____  
- \ \_____\  \ \_\  \/\_____\  \ \_\ \_\  \ \_\ \_\  \ \_____\ 
-  \/_____/   \/_/   \/_____/   \/_/\/_/   \/_/\/_/   \/_____/ 
-   
+            
+    ▄▄▄▄    ██▓  ██████  ██░ ██  ▄▄▄       ██▓    
+    ▓█████▄ ▓██▒▒██    ▒ ▓██░ ██▒▒████▄    ▓██▒    
+    ▒██▒ ▄██▒██▒░ ▓██▄   ▒██▀▀██░▒██  ▀█▄  ▒██░    
+    ▒██░█▀  ░██░  ▒   ██▒░▓█ ░██ ░██▄▄▄▄██ ▒██░    
+    ░▓█  ▀█▓░██░▒██████▒▒░▓█▒░██▓ ▓█   ▓██▒░██████▒
+    ░▒▓███▀▒░▓  ▒ ▒▓▒ ▒ ░ ▒ ░░▒░▒ ▒▒   ▓▒█░░ ▒░▓  ░
+    ▒░▒   ░  ▒ ░░ ░▒  ░ ░ ▒ ░▒░ ░  ▒   ▒▒ ░░ ░ ▒  ░
+    ░    ░  ▒ ░░  ░  ░   ░  ░░ ░  ░   ▒     ░ ░   
+    ░       ░        ░   ░  ░  ░      ░  ░    ░  ░
+        ░                                        
+
     Version: {__version__}
     Library: kurigram {__pyroVersion__}
     GitHub: https://github.com/bishalqx980

@@ -5,7 +5,7 @@ from datetime import timedelta
 from pyrogram import filters
 from pyrogram.types import Message
 
-from app import bot, BOT_UPTIME, LOADING_STICKER
+from app import bot, BOT_UPTIME
 from app.utils.database import MemoryDB
 from app.modules.utils import UTILITY
 from app.utils.decorators.sudo_users import require_sudo
@@ -14,9 +14,6 @@ from app.utils.decorators.sudo_users import require_sudo
 @bot.on_message(filters.command("sys", ["/", "!", "-", "."]))
 @require_sudo
 async def func_sys(_, message: Message):
-    # Sticker message cant be edit
-    sent_message = await message.reply_sticker(LOADING_STICKER)
-    
     # Systen Uptime Calculating
     sys_uptime = timedelta(seconds=time() - psutil.boot_time())
 
@@ -40,17 +37,6 @@ async def func_sys(_, message: Message):
     ramBar = UTILITY.createProgressBar(ramPercent)
     swapRamBar = UTILITY.createProgressBar(swapRamPercent)
     diskUsageBar = UTILITY.createProgressBar(diskUsagePercent)
-
-    # pinging server
-    server_url = MemoryDB.bot_data.get("server_url")
-    server_ping = "~ infinite ~" # pre-determined
-    if server_url:
-        if not server_url.startswith("http"):
-            server_url = f"http://{server_url}"
-        
-        server_ping = await UTILITY.pingServer(server_url)
-    # Telegram Server Ping Check
-    tg_server_ping = await UTILITY.pingServer("http://api.telegram.org/")
     
     sys_info = (
         "<blockquote>**🖥️ System information**</blockquote>\n\n"
@@ -89,9 +75,29 @@ async def func_sys(_, message: Message):
         f"**└ Bot uptime:** `{int(bot_days)}d {int(bot_hours)}h {int(bot_minute)}m`\n\n"
 
         "**🌐 Server**\n"
-        f"**├ Ping:** `{server_ping}`\n"
-        f"**└ Telegram:** `{tg_server_ping}`"
+        "**├ Ping:** `{server_ping}`\n"
+        "**└ Telegram:** `{tg_server_ping}`"
     )
 
-    await sent_message.delete()
-    await message.reply_text(sys_info)
+    # sending sys info without ping (no need to wait for ping response)
+    sent_message = await message.reply_text(sys_info.format(
+        server_ping = "loading...",
+        tg_server_ping = "loading..."
+    ))
+
+    # pinging server
+    server_url = MemoryDB.bot_data.get("server_url")
+    server_ping = "~ infinite ~" # pre-determined
+    if server_url:
+        if not server_url.startswith("http"):
+            server_url = f"http://{server_url}"
+        
+        server_ping = await UTILITY.pingServer(server_url)
+    # Telegram Server Ping Check
+    tg_server_ping = await UTILITY.pingServer("http://api.telegram.org/")
+
+    # editing sys info after getting ping info
+    await sent_message.edit_text(sys_info.format(
+        server_ping = server_ping,
+        tg_server_ping = tg_server_ping
+    ))
